@@ -1,0 +1,80 @@
+/* ==========================================================================
+   KILL ADDICTION - High Precision Multi-Platform Feed Eradicator
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. FACEBOOK: Eradicate Center Feed, Posts & Stories
+   -------------------------------------------------------------------------- */
+html[data-kill-facebook="true"] [role="feed"],
+html[data-kill-facebook="true"] [data-pagelet="Feed"],
+html[data-kill-facebook="true"] [data-pagelet="GroupFeed"],
+html[data-kill-facebook="true"] [data-pagelet="VideoFeed"],
+html[data-kill-facebook="true"] [data-pagelet="Stories"],
+html[data-kill-facebook="true"] [aria-label="Tin"],
+html[data-kill-facebook="true"] [aria-label="Reels"],
+html[data-kill-facebook="true"] [aria-label="Thước phim"],
+html[data-kill-facebook="true"] div[role="main"] [data-pagelet^="FeedUnit"],
+html[data-kill-facebook="true"] div[role="main"] div[role="article"]:not([role="complementary"] *):not([data-pagelet="ChatTab"] *):not([role="dialog"] *):not([aria-label="Messenger"] *),
+html[data-kill-facebook="true"] #stream_pagelet {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. THREADS: Eradicate Timeline & Post Stream
+   -------------------------------------------------------------------------- */
+html[data-kill-threads="true"] [data-pressable-container="true"],
+html[data-kill-threads="true"] div[aria-label="Dành cho bạn"],
+html[data-kill-threads="true"] div[aria-label="For you"],
+html[data-kill-threads="true"] div[aria-label="Following"],
+html[data-kill-threads="true"] div[aria-label="Đang theo dõi"],
+html[data-kill-threads="true"] main article,
+html[data-kill-threads="true"] main section,
+html[data-kill-threads="true"] main div:has(> [data-pressable-container="true"]) {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. YOUTUBE: Eradicate Home Grid & Video Recommendations
+   -------------------------------------------------------------------------- */
+html[data-kill-youtube="true"] ytd-rich-grid-renderer,
+html[data-kill-youtube="true"] ytd-reel-shelf-renderer,
+html[data-kill-youtube="true"] ytd-watch-next-secondary-results-renderer,
+html[data-kill-youtube="true"] #related {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. TIKTOK: Eradicate Video Feed & Recommended Stream
+   -------------------------------------------------------------------------- */
+html[data-kill-tiktok="true"] [data-e2e="recommend-feed-container"],
+html[data-kill-tiktok="true"] [data-e2e="feed-video"],
+html[data-kill-tiktok="true"] div[class*="DivFeedContainer"],
+html[data-kill-tiktok="true"] div[class*="DivItemContainer"],
+html[data-kill-tiktok="true"] div[class*="DivVideoFeed"],
+html[data-kill-tiktok="true"] main div[class*="DivBodyContainer"] > div[class*="DivContentContainer"] {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. INSTAGRAM: Eradicate Feed & Stories (Preserve /direct/ Messages)
+   -------------------------------------------------------------------------- */
+html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] article,
+html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] section > div,
+html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] [aria-label="Stories"],
+html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] [aria-label="Tin"] {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. DOM INSPECTOR ZAPPER & USER ZAPPED STYLES
+   -------------------------------------------------------------------------- */
+.kill-addiction-highlight {
+  outline: 3px solid #f43f5e !important;
+  outline-offset: -3px !important;
+  background-color: rgba(244, 63, 94, 0.15) !important;
+  cursor: crosshair !important;
+}
+
+.kill-addiction-zapped {
+  display: none !important;
+}

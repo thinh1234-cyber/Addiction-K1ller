@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kill Addiction Settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body data-theme="dark">
+  <div class="card">
+    <div class="header">
+      <div class="theme-picker">
+        <select id="theme-select" title="Chọn Theme UI">
+          <option value="dark">Dark</option>
+          <option value="cappuccino">Cappuccino</option>
+          <option value="pink">Pink</option>
+          <option value="light-white">Light</option>
+          <option value="gray">Gray</option>
+        </select>
+      </div>
+      <div class="header-right">
+        <button id="update-btn" class="update-btn" title="Kiểm tra & Cập nhật phiên bản từ GitHub">Update</button>
+        <span class="badge">V1.0.0</span>
+      </div>
+    </div>
+
+    <div class="title-group">
+      <h2>Kill Addiction</h2>
+      <p class="subtitle">Loại bỏ bảng tin gây xao nhãng</p>
+    </div>
+
+    <div class="toggle-list">
+      <div class="toggle-item">
+        <div class="toggle-label">
+          <span class="platform-tag fb">FB</span>
+          <span>Facebook Feed</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="facebook">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-item">
+        <div class="toggle-label">
+          <span class="platform-tag yt">YT</span>
+          <span>YouTube Recommended</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="youtube">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-item">
+        <div class="toggle-label">
+          <span class="platform-tag tt">TT</span>
+          <span>TikTok Feed</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="tiktok">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-item">
+        <div class="toggle-label">
+          <span class="platform-tag ig">IG</span>
+          <span>Instagram Feed</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="instagram">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-item">
+        <div class="toggle-label">
+          <span class="platform-tag th">TH</span>
+          <span>Threads Feed</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="threads">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="action-buttons">
+      <button id="inspect-btn" class="btn btn-primary">Chỉ định ẩn phần tử</button>
+      <button id="reset-zapped-btn" class="btn btn-secondary">Khôi phục phần tử đã ẩn</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
