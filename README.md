@@ -3,60 +3,49 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/thinh1234-cyber/Addiction-K1ller)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-A powerful, high-precision Chrome Extension (Manifest V3) designed to eradicate addictive social media news feeds across **Facebook**, **YouTube**, **TikTok**, **Instagram**, and **Threads** — while keeping messaging, chats, search, and navigation 100% functional.
+Chrome Extension (Manifest V3) giúp ẩn triệt để Bảng tin (News Feed) gây xao nhãng trên **Facebook**, **YouTube**, **TikTok**, **Instagram** và **Threads** — nhưng vẫn **bảo toàn 100% tính năng Chat, Messenger và Tìm kiếm**.
 
-Repository: [https://github.com/thinh1234-cyber/Addiction-K1ller](https://github.com/thinh1234-cyber/Addiction-K1ller)
-
----
-
-## ✨ Features
-
-- **Surgical Feed Removal:** Targets and hides only center news feeds (`[role="feed"]`, timeline streams, recommendation grids).
-- **Messaging Protection:** Keeps Facebook Messenger, Instagram DMs, YouTube search, and navigation sidebars completely untouched.
-- **Focus Banner Injection:** Replaces distracting feeds with an elegant focus reminder banner.
-- **DOM Element Zapper:** Inspect mode allows users to click and permanently hide any unwanted UI element.
-- **Reset Zapped List:** Easily restore custom hidden elements with a single click.
-- **VS Code Pastel Themes:** Custom UI supporting 5 pastel themes (`Dark`, `Cappuccino`, `Pink`, `Light`, `Gray`).
-- **Auto-Update Check:** One-click update button in the extension popup header to check for new releases and auto-reload.
+📌 **GitHub Repository:** [thinh1234-cyber/Addiction-K1ller](https://github.com/thinh1234-cyber/Addiction-K1ller)
 
 ---
 
-## 🚀 Supported Platforms
+## ⚡ Tính Năng Nổi Bật
 
-| Platform | Eradicated Component | Preserved Feature |
+- **Loại Bỏ Feed Chuẩn Xác:** Chỉ ẩn luồng bài viết ở giữa, không làm méo UI hay vỡ khung chat.
+- **Bảo Vệ Tính Năng Nhắn Tin:** Giữ nguyên Messenger, Instagram DMs, khung tìm kiếm YouTube & menu điều hướng.
+- **Thay Thế Bằng Banner Tập Trung:** Chèn banner nhắc nhở tập trung làm việc tại vị trí Feed bị ẩn.
+- **DOM Element Zapper:** Cho phép click chọn để ẩn vĩnh viễn bất kỳ phần tử nào gây xao nhãng khác.
+- **Khôi Phục Nhanh:** Nút reset khôi phục lại các phần tử đã ẩn thủ công chỉ với 1 click.
+- **Giao Diện Pastel VS Code:** Hỗ trợ 5 chủ đề màu (`Dark`, `Cappuccino`, `Pink`, `Light`, `Gray`).
+- **Nút Update Tự Động:** Kiểm tra phiên bản mới từ GitHub và tự động reload extension.
+
+---
+
+## 🎯 Nền Tảng Hỗ Trợ
+
+| Nền tảng | Phần bị ẩn | Tính năng giữ nguyên |
 | :--- | :--- | :--- |
-| **Facebook** | Home Newsfeed & Stories | Messenger Chat, Sidebars, Navigation |
-| **YouTube** | Home Recommended Grid & Shorts | Search Bar, Video Playback, Comments |
-| **TikTok** | FYP Video Recommendation Stream | Search & Navigation |
-| **Instagram** | Timeline Feed & Stories | Direct Messages (`/direct/`) |
-| **Threads** | Main Feed & Post Stream | Profile, Messages & Search |
+| **Facebook** | Newsfeed & Stories | Messenger Chat, Sidebar, Navigation |
+| **YouTube** | Gợi ý trang chủ & Shorts | Khung tìm kiếm, Xem video, BÌnh luận |
+| **TikTok** | Luồng video đề xuất (FYP) | Khung tìm kiếm & Điều hướng |
+| **Instagram** | Timeline Feed & Stories | Nhắn tin trực tiếp (`/direct/`) |
+| **Threads** | Luồng bài viết Timeline | Trang cá nhân, Tin nhắn & Tìm kiếm |
 
 ---
 
-## 📦 Installation Guide
+## 🚀 Hướng Dẫn Cài Đặt
 
-1. Clone or download this repository:
+1. Tải hoặc Clone repository này về máy:
    ```bash
    git clone https://github.com/thinh1234-cyber/Addiction-K1ller.git
    ```
-2. Open Google Chrome and navigate to `chrome://extensions/`.
-3. Enable **Developer mode** in the top right corner.
-4. Click **Load unpacked** and select the `kill addiction` directory.
-5. Pin **Kill Addiction** to your browser toolbar!
+2. Mở trình duyệt Chrome và truy cập `chrome://extensions/`.
+3. Bật **Chế độ dành cho nhà phát triển (Developer mode)** ở góc trên bên phải.
+4. Chọn **Tải tiện ích đã giải nén (Load unpacked)** và chọn thư mục project `kill addiction`.
+5. Ghim tiện ích **Kill Addiction** lên thanh công cụ để sử dụng!
 
 ---
 
-## 🎨 VS Code Themes
+## 📄 Giấy Phép
 
-Choose your favorite UI theme directly from the popup top-left selector:
-- **Dark** (Default Slate Dark)
-- **Cappuccino** (Warm Coffee Pastel)
-- **Pink** (Sakura Pink Pastel)
-- **Light** (Clean Soft Light)
-- **Gray** (Nord Slate Gray)
-
----
-
-## 📄 License
-
-MIT License © 2026 [Kyle - Electronics & Telecommunications]
+Phát triển bởi **Kyle** (Điện tử Viễn thông) — Phát hành theo giấy phép MIT.
