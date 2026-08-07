@@ -1,23 +1,22 @@
-# 🛡️ Kill Addiction - Feed Blocker & DOM Inspector
+# 🛡️ Addiction K1ller
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/thinh1234-cyber/Addiction-K1ller)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Chrome Extension (Manifest V3) giúp ẩn triệt để Bảng tin (News Feed) gây xao nhãng trên **Facebook**, **YouTube**, **TikTok**, **Instagram** và **Threads** — nhưng vẫn **bảo toàn 100% tính năng Chat, Messenger và Tìm kiếm**.
+Chrome Extension giúp ẩn triệt để News Feed gây xao nhãng.
 
-📌 **GitHub Repository:** [thinh1234-cyber/Addiction-K1ller](https://github.com/thinh1234-cyber/Addiction-K1ller)
 
 ---
 
 ## ⚡ Tính Năng Nổi Bật
 
-- **Loại Bỏ Feed Chuẩn Xác:** Chỉ ẩn luồng bài viết ở giữa, không làm méo UI hay vỡ khung chat.
-- **Bảo Vệ Tính Năng Nhắn Tin:** Giữ nguyên Messenger, Instagram DMs, khung tìm kiếm YouTube & menu điều hướng.
-- **Thay Thế Bằng Banner Tập Trung:** Chèn banner nhắc nhở tập trung làm việc tại vị trí Feed bị ẩn.
-- **DOM Element Zapper:** Cho phép click chọn để ẩn vĩnh viễn bất kỳ phần tử nào gây xao nhãng khác.
-- **Khôi Phục Nhanh:** Nút reset khôi phục lại các phần tử đã ẩn thủ công chỉ với 1 click.
-- **Giao Diện Pastel VS Code:** Hỗ trợ 5 chủ đề màu (`Dark`, `Cappuccino`, `Pink`, `Light`, `Gray`).
-- **Nút Update Tự Động:** Kiểm tra phiên bản mới từ GitHub và tự động reload extension.
+- **Loại Bỏ Feed Chuẩn Xác:** Chỉ ẩn luồng bài viết ở giữa không làm vỡ UI.
+- **Bảo Vệ Tính Năng Nhắn Tin:** Giữ nguyên khung DMs, khung tìm kiếm YouTube & menu điều hướng.
+- **Thay Thế Bằng Banner Tập Trung:** Chèn banner nhắc nhở tại vị trí Feed bị ẩn.
+- **DOM Element Zapper:** Cho phép click chọn để ẩn bất kỳ phần tử gây xao nhãng khác.
+- **Khôi Phục Nhanh:** Nút khôi phục lại các phần tử đã ẩn thủ công.
+- **Giao Diện Pastel VS Code:** Hỗ trợ 5 chủ đề màu.
+- **Nút Update Tự Động:** Kiểm tra phiên bản mới.
 
 ---
 
@@ -44,8 +43,8 @@ Chrome Extension (Manifest V3) giúp ẩn triệt để Bảng tin (News Feed) g
 4. Chọn **Tải tiện ích đã giải nén (Load unpacked)** và chọn thư mục project `kill addiction`.
 5. Ghim tiện ích **Kill Addiction** lên thanh công cụ để sử dụng!
 
+
 ---
-
-## 📄 Giấy Phép
-
-Phát triển bởi **Kyle** (Điện tử Viễn thông) — Phát hành theo giấy phép MIT.
+<div align="center">
+<p>Made with ❤️ by <b>Nguyễn Thịnh - Kyle</b></p>
+</div>
