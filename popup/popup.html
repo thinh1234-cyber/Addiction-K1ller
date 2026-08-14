@@ -11,16 +11,22 @@
     <div class="header">
       <div class="theme-picker">
         <select id="theme-select" title="Chọn Theme UI">
-          <option value="dark">Dark</option>
+          <option value="dark">Dark Slate</option>
           <option value="cappuccino">Cappuccino</option>
-          <option value="pink">Pink</option>
-          <option value="light-white">Light</option>
-          <option value="gray">Gray</option>
+          <option value="pink">Sakura Pink</option>
+          <option value="light-white">Light White</option>
+          <option value="gray">Slate Gray</option>
+          <option value="dracula">Dracula</option>
+          <option value="one-dark-pro">One Dark Pro</option>
+          <option value="monokai">Monokai Pro</option>
+          <option value="cyberpunk">Cyberpunk</option>
+          <option value="solarized-dark">Solarized Teal</option>
         </select>
       </div>
       <div class="header-right">
         <button id="update-btn" class="update-btn" title="Kiểm tra & Cập nhật phiên bản từ GitHub">Update</button>
-        <span class="badge">V1.0.0</span>
+        <button id="settings-btn" class="icon-btn" title="Cài đặt & Thống kê thời gian">⚙️</button>
+        <span class="badge">V2.0.0</span>
       </div>
     </div>
 
@@ -33,7 +39,7 @@
       <div class="toggle-item">
         <div class="toggle-label">
           <span class="platform-tag fb">FB</span>
-          <span>Facebook Feed</span>
+          <span id="label-facebook">Facebook</span>
         </div>
         <label class="switch">
           <input type="checkbox" id="facebook">
@@ -44,7 +50,7 @@
       <div class="toggle-item">
         <div class="toggle-label">
           <span class="platform-tag yt">YT</span>
-          <span>YouTube Recommended</span>
+          <span id="label-youtube">YouTube</span>
         </div>
         <label class="switch">
           <input type="checkbox" id="youtube">
@@ -55,7 +61,7 @@
       <div class="toggle-item">
         <div class="toggle-label">
           <span class="platform-tag tt">TT</span>
-          <span>TikTok Feed</span>
+          <span id="label-tiktok">TikTok</span>
         </div>
         <label class="switch">
           <input type="checkbox" id="tiktok">
@@ -66,7 +72,7 @@
       <div class="toggle-item">
         <div class="toggle-label">
           <span class="platform-tag ig">IG</span>
-          <span>Instagram Feed</span>
+          <span id="label-instagram">Instagram</span>
         </div>
         <label class="switch">
           <input type="checkbox" id="instagram">
@@ -77,7 +83,7 @@
       <div class="toggle-item">
         <div class="toggle-label">
           <span class="platform-tag th">TH</span>
-          <span>Threads Feed</span>
+          <span id="label-threads">Threads</span>
         </div>
         <label class="switch">
           <input type="checkbox" id="threads">

@@ -1,40 +1,31 @@
 /* ==========================================================================
-   KILL ADDICTION - Popup Controller Logic with Theme & Auto-Update Manager
+   KILL ADDICTION - Popup Interface Controller (Synced Controls & Live Countdown)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const platforms = ['facebook', 'youtube', 'tiktok', 'instagram', 'threads'];
+  const themeSelect = document.getElementById('theme-select');
   const inspectBtn = document.getElementById('inspect-btn');
   const resetZappedBtn = document.getElementById('reset-zapped-btn');
-  const themeSelect = document.getElementById('theme-select');
+  const settingsBtn = document.getElementById('settings-btn');
   const updateBtn = document.getElementById('update-btn');
 
-  // Load saved theme & settings
-  chrome.storage.local.get([...platforms, 'theme'], (res) => {
-    // 1. Apply Theme
+  const platforms = ['facebook', 'youtube', 'tiktok', 'instagram', 'threads'];
+
+  const PLATFORM_NAMES = {
+    facebook: 'Facebook',
+    youtube: 'YouTube',
+    tiktok: 'TikTok',
+    instagram: 'Instagram',
+    threads: 'Threads'
+  };
+
+  // 1. Theme Selector
+  chrome.storage.local.get(['theme'], (res) => {
     const currentTheme = res.theme || 'dark';
     document.body.setAttribute('data-theme', currentTheme);
     if (themeSelect) themeSelect.value = currentTheme;
-
-    // 2. Load Checkbox States
-    const stateToSave = {};
-    platforms.forEach((p) => {
-      const isEnabled = res[p] !== false;
-      stateToSave[p] = isEnabled;
-
-      const checkbox = document.getElementById(p);
-      if (checkbox) {
-        checkbox.checked = isEnabled;
-        checkbox.addEventListener('change', (e) => {
-          chrome.storage.local.set({ [p]: e.target.checked });
-        });
-      }
-    });
-
-    chrome.storage.local.set(stateToSave);
   });
 
-  // Theme Change Event Handler
   if (themeSelect) {
     themeSelect.addEventListener('change', (e) => {
       const selectedTheme = e.target.value;
@@ -43,64 +34,126 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 1. DOM Inspector Trigger ("Chỉ định ẩn phần tử")
+  // 2. Load Platform Switch States & Live Countdown Labels
+  function updateSwitchesAndLabels() {
+    chrome.storage.local.get([...platforms, 'tempUnblocks'], (res) => {
+      const tempUnblocks = res.tempUnblocks || {};
+      const now = Date.now();
+
+      platforms.forEach((p) => {
+        const checkbox = document.getElementById(p);
+        const labelElem = document.getElementById(`label-${p}`);
+        const isChecked = res[p] !== false;
+
+        if (checkbox) {
+          checkbox.checked = isChecked;
+        }
+
+        const item = tempUnblocks[p];
+        if (!isChecked && item && item.expireTime) {
+          const remainingSec = Math.max(0, Math.ceil((item.expireTime - now) / 1000));
+          if (remainingSec > 0) {
+            if (labelElem) labelElem.textContent = `${PLATFORM_NAMES[p]} (${remainingSec}s left)`;
+          } else {
+            if (labelElem) labelElem.textContent = PLATFORM_NAMES[p];
+          }
+        } else {
+          if (labelElem) labelElem.textContent = PLATFORM_NAMES[p];
+        }
+      });
+    });
+  }
+
+  // Initial Run & 1-Second Countdown Ticker
+  updateSwitchesAndLabels();
+  const ticker = setInterval(updateSwitchesAndLabels, 1000);
+
+  // Sync state changes in real time
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local') {
+      updateSwitchesAndLabels();
+    }
+  });
+
+  // Attach Switch OnChange Handlers
+  platforms.forEach((p) => {
+    const checkbox = document.getElementById(p);
+    if (checkbox) {
+      checkbox.onchange = (e) => {
+        const isChecked = e.target.checked;
+
+        chrome.storage.local.get(['tempUnblocks'], (res) => {
+          const tempUnblocks = res.tempUnblocks || {};
+
+          if (!isChecked) {
+            // Random duration 20s to 300s
+            const durationSec = Math.floor(Math.random() * (300 - 20 + 1)) + 20;
+            const expireTime = Date.now() + durationSec * 1000;
+
+            tempUnblocks[p] = { expireTime, duration: durationSec };
+
+            chrome.storage.local.set({ [p]: false, tempUnblocks }, () => {
+              updateSwitchesAndLabels();
+            });
+          } else {
+            delete tempUnblocks[p];
+            chrome.storage.local.set({ [p]: true, tempUnblocks }, () => {
+              updateSwitchesAndLabels();
+            });
+          }
+        });
+      };
+    }
+  });
+
+  // 3. Inspect Mode Button Handler
   if (inspectBtn) {
     inspectBtn.addEventListener('click', async () => {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab && tab.id) {
+      if (tab) {
         chrome.tabs.sendMessage(tab.id, { action: 'TOGGLE_INSPECT' }, (res) => {
-          if (chrome.runtime.lastError) {
-            alert('Vui lòng reload trang web để Extension kích hoạt Zapper!');
-            return;
-          }
           if (res && res.status === 'INSPECT_ENABLED') {
-            window.close();
+            inspectBtn.textContent = '❌ Tắt Zapper Mode';
+            inspectBtn.style.background = '#f43f5e';
+          } else {
+            inspectBtn.textContent = '🎯 Chọn vùng cần block (Zapper)';
+            inspectBtn.style.background = '';
           }
         });
       }
     });
   }
 
-  // 2. Reset Zapped List Trigger ("Khôi phục phần tử đã ẩn")
+  // Reset Zapped Elements
   if (resetZappedBtn) {
     resetZappedBtn.addEventListener('click', async () => {
-      if (confirm('Bạn có chắc chắn muốn khôi phục lại tất cả các phần tử đã ẩn thủ công?')) {
+      if (confirm('Bạn có muốn khôi phục lại tất cả phần tử đã ẩn thủ công không?')) {
         chrome.storage.local.set({ zappedSelectors: [] }, async () => {
           const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-          if (tab && tab.id) {
+          if (tab) {
             chrome.tabs.sendMessage(tab.id, { action: 'RESET_ZAPPED' });
           }
-          alert('Đã khôi phục toàn bộ các phần tử đã ẩn!');
+          alert('Đã khôi phục các phần tử đã ẩn!');
         });
       }
     });
   }
 
-  // 3. Auto-Update Check & Reload Trigger
-  if (updateBtn) {
-    updateBtn.addEventListener('click', async () => {
-      updateBtn.textContent = '...';
-      try {
-        const response = await fetch(
-          'https://raw.githubusercontent.com/thinh1234-cyber/Addiction-K1ller/main/manifest.json?cache=' + Date.now()
-        );
-        if (response.ok) {
-          const remoteManifest = await response.json();
-          const localVersion = chrome.runtime.getManifest().version;
-          if (remoteManifest.version && remoteManifest.version !== localVersion) {
-            alert(`Đã tìm thấy phiên bản mới (v${remoteManifest.version}) trên GitHub!\nĐang tự động làm mới Extension...`);
-          } else {
-            alert(`Phiên bản hiện tại (v${localVersion}) đã mới nhất!\nĐang làm mới Extension...`);
-          }
-        } else {
-          alert('Đã hoàn tất kiểm tra & làm mới Extension!');
-        }
-      } catch (err) {
-        alert('Đã làm mới Extension!');
-      } finally {
-        updateBtn.textContent = 'Update';
-        chrome.runtime.reload();
+  // Open Settings Dashboard Button
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+      } else {
+        window.open(chrome.runtime.getURL('options/settings.html'));
       }
+    });
+  }
+
+  // Update Button Handler
+  if (updateBtn) {
+    updateBtn.addEventListener('click', () => {
+      window.open('https://github.com/thinh1234-cyber/Addiction-K1ller', '_blank');
     });
   }
 });

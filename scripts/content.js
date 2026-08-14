@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KILL ADDICTION - Dynamic Content Script & Multi-Platform Feed Eradicator
+   KILL ADDICTION - Dynamic Content Script & Multi-Platform Eradicator
    ========================================================================== */
 
 (function () {
@@ -13,8 +13,46 @@
     tiktok: true,
     instagram: true,
     threads: true,
+    customBlockedDomains: [],
     zappedSelectors: []
   };
+
+  // 30 Gen Z Sarcastic / Motivational Quotes for Custom Blocked Sites
+  const GENZ_SARCASTIC_QUOTES = [
+    // 1 - 10
+    "Bớt lướt web vô bổ lại đi bạn ơi. Tương lai sáng lạn không nằm ở cái sự lười biếng này đâu!",
+    "Ủa rồi định lướt tới mấy giờ? KPI chưa xong mà tâm trí cứ đòi sang chảnh giải trí 'xíu' à?",
+    "Vào đây làm gì nữa? Tính trốn việc à? Thôi quay lại làm việc đi cho đời bớt nợ!",
+    "Tầm này người ta đang cày tiền cày tri thức, còn bạn thì đang cố vào cái trang này. Thấy sai sai chưa?",
+    "Nghèo thì phải bôn ba, lười biếng thì chỉ có ăn cám thôi! Đóng tab ngay còn kịp!",
+    "Ủa alo? Não bảo làm việc mà tay lại linh tinh gì đấy? Tỉnh táo lại giùm cái!",
+    "Định vô đây kiếm tý dopamine bẩn đúng không? Mơ đi, mở công việc lên mà cày!",
+    "Sống có trách nhiệm với bản thân chút đi bạn ơi. Trang này đâu có trả lương cho bạn đâu?",
+    "Chán bạn thật sự luôn á! Mới tập trung được 5 phút đã mò vào đây rồi. Yếu đuối vậy?",
+    "Muốn giàu sang thành công hay muốn thất nghiệp ăn bám? Chọn đi rồi tắt tab này ngay!",
+    // 11 - 20
+    "Mở tab này lên tính giải trí hay tính giải tán luôn sự nghiệp?",
+    "Nhìn lại cái To-Do List đi bạn ơi, nó đang khóc thét kìa chứ ngồi đó mà lướt!",
+    "Tuổi trẻ này ngắn lắm, đừng lãng phí nó vào mấy cái click chuột vô nghĩa này nữa!",
+    "Ủa rồi ai làm công việc giùm bạn? Cả thế giới đang tiến lên mà bạn lại đứng đây lướt web?",
+    "Nuôi hoài hoài chưa thấy lớn, mới gặp tý áp lực đã mò vào trang web này tìm cảm giác an toàn à?",
+    "Trang này không giúp bạn trả tiền nhà, tiền điện hay tiền cà phê đâu. Tắt đi cày tiếp!",
+    "Đừng biến sự lười biếng thành thói quen. Đóng tab lại và làm điều có ích hơn đi!",
+    "Muốn có kết quả hơn người thì phải chịu được cảm giác làm việc khi người khác đang chơi!",
+    "Thôi đừng tự lừa dối bản thân nữa. Bạn thừa biết vào đây chỉ tốn thời gian thôi mà?",
+    "Bật chế độ nghiêm túc lên đi! Trẻ không bôn ba, già hối hận không kịp đâu!",
+    // 21 - 30
+    "Ủa tưởng hôm nay quyết tâm cày code/học tập dữ lắm mà? Sao lại xuất hiện ở đây?",
+    "Mặt hồ gợn sóng vì gió, còn sự nghiệp bạn gợn sóng vì mấy cái tab vô bổ này đó!",
+    "Tắt tab này ngay trước khi sự lười biếng nuốt chửng nấc thang sự nghiệp của bạn!",
+    "Bạn có 24h mỗi ngày giống như mọi tỷ phú. Khác biệt là họ không lướt trang web này!",
+    "Hành động nhỏ tạo nên số phận lớn. Việc đóng tab này chính là bước đầu tiên đó!",
+    "Đừng để sự nuông chiều bản thân hôm nay trở thành nước mắt của ngày mai!",
+    "Tính lướt 'nốt 5 phút' nữa đúng không? 5 phút của bạn kéo dài từ sáng tới chiều rồi đó!",
+    "Thời gian là tài sản duy nhất mất đi không lấy lại được. Đừng ném nó qua cửa sổ!",
+    "Vắng bạn trang này vẫn hoạt động bình thường, nhưng thiếu sự tập trung thì tương lai bạn bị ảnh hưởng đó!",
+    "Đủ rồi đấy! Quay lại làm việc ngay và luôn, chiến binh không được gục ngã trước cám dỗ!"
+  ];
 
   // Helper: Is element inside a Messenger or Chat container?
   function isInsideChat(el) {
@@ -29,100 +67,248 @@
     );
   }
 
+  // Helper: Extract clean Root Domain (e.g., m.facebook.com -> facebook.com)
+  function extractRootDomain(host) {
+    if (!host) return '';
+    const cleanHost = host.toLowerCase().replace(/^www\./, '');
+    const parts = cleanHost.split('.');
+    if (parts.length <= 2) return cleanHost;
+
+    const multiPartTlds = ['co.uk', 'com.vn', 'edu.vn', 'gov.vn', 'net.vn', 'org.vn', 'co.jp', 'com.au', 'com.br', 'co.in'];
+    const lastTwo = parts.slice(-2).join('.');
+
+    if (multiPartTlds.includes(lastTwo) && parts.length >= 3) {
+      return parts.slice(-3).join('.');
+    }
+    return parts.slice(-2).join('.');
+  }
+
+  // Helper: Is current domain or subdomain in custom blocked list?
+  function checkCustomDomainBlock(host, blockedList) {
+    if (!Array.isArray(blockedList)) return null;
+    const cleanHost = host.toLowerCase().replace(/^www\./, '');
+    const rootDom = extractRootDomain(host);
+
+    for (const domain of blockedList) {
+      const cleanDomain = domain.toLowerCase().trim().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+      if (cleanDomain && (cleanHost === cleanDomain || cleanHost.endsWith('.' + cleanDomain) || rootDom === cleanDomain)) {
+        return cleanDomain;
+      }
+    }
+    return null;
+  }
+
+  // Render Full Site Blocker Overlay with Random Gen Z Sarcastic Quote
+  function renderFullSiteBlockerOverlay(matchedDomain) {
+    const overlayId = 'kill-addiction-full-site-blocker-overlay';
+    if (!document.getElementById(overlayId)) {
+      const randomQuote = GENZ_SARCASTIC_QUOTES[Math.floor(Math.random() * GENZ_SARCASTIC_QUOTES.length)];
+
+      const overlay = document.createElement('div');
+      overlay.id = overlayId;
+      overlay.className = 'kill-addiction-full-site-blocker';
+      overlay.innerHTML = `
+        <div style="font-size: 64px; margin-bottom: 20px;">🛑</div>
+        <h1 style="margin: 0 0 14px 0; color: #f43f5e; font-size: 32px; font-weight: 800; letter-spacing: -0.5px;">TRANG WEB ĐÃ BỊ CHẶN HOÀN TOÀN</h1>
+        
+        <div style="max-width: 600px; background: rgba(244, 63, 94, 0.12); border: 2px dashed #f43f5e; padding: 20px 24px; border-radius: 14px; margin: 16px auto 24px auto;">
+          <p style="margin: 0; color: #f8fafc; font-size: 18px; font-weight: 700; line-height: 1.5;">"${randomQuote}"</p>
+        </div>
+
+        <p style="margin: 0; color: #94a3b8; font-size: 14px;">
+          <strong>${matchedDomain}</strong> đã bị khóa. Hãy đóng tab và quay lại làm việc!
+        </p>
+      `;
+      (document.body || document.documentElement).appendChild(overlay);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // FLOATING COUNTDOWN CIRCLE CLOCK (15s FINAL TIMER)
+  // --------------------------------------------------------------------------
+  function getCurrentPlatform() {
+    if (hostname.includes('facebook.com')) return 'facebook';
+    if (hostname.includes('youtube.com')) return 'youtube';
+    if (hostname.includes('tiktok.com')) return 'tiktok';
+    if (hostname.includes('instagram.com')) return 'instagram';
+    if (hostname.includes('threads')) return 'threads';
+    return null;
+  }
+
+  function updateCountdownWidget(remainingSec) {
+    const widgetId = 'kill-addiction-countdown-widget';
+    let widget = document.getElementById(widgetId);
+
+    if (remainingSec <= 0) {
+      if (widget) widget.remove();
+      window.location.reload();
+      return;
+    }
+
+    if (!widget) {
+      widget = document.createElement('div');
+      widget.id = widgetId;
+      widget.className = 'kill-addiction-countdown-container';
+      widget.innerHTML = `
+        <svg class="countdown-svg" width="56" height="56" viewBox="0 0 56 56">
+          <circle class="countdown-bg-circle" cx="28" cy="28" r="22" />
+          <circle id="kill-addiction-countdown-progress" class="countdown-progress-circle" cx="28" cy="28" r="22" />
+        </svg>
+        <div id="kill-addiction-countdown-text" class="countdown-text">15s</div>
+      `;
+      (document.body || document.documentElement).appendChild(widget);
+    }
+
+    const progressElem = document.getElementById('kill-addiction-countdown-progress');
+    const textElem = document.getElementById('kill-addiction-countdown-text');
+
+    if (progressElem && textElem) {
+      const circumference = 138.23; // 2 * Math.PI * 22
+      const ratio = Math.max(0, Math.min(1, remainingSec / 15));
+      const strokeDashoffset = circumference * (1 - ratio);
+
+      progressElem.style.strokeDashoffset = strokeDashoffset;
+
+      // Color transition: Green (>10s) -> Yellow (6s-10s) -> Red (1s-5s)
+      let strokeColor = '#22c55e';
+      if (remainingSec <= 10 && remainingSec > 5) {
+        strokeColor = '#eab308';
+      } else if (remainingSec <= 5) {
+        strokeColor = '#ef4444';
+      }
+
+      progressElem.style.stroke = strokeColor;
+      textElem.textContent = `${remainingSec}s`;
+    }
+  }
+
+  // Monitor Temporary Unblock Expiry Timer
+  setInterval(() => {
+    const platform = getCurrentPlatform();
+    if (!platform) return;
+
+    chrome.storage.local.get(['tempUnblocks'], (res) => {
+      const tempUnblocks = res.tempUnblocks || {};
+      const item = tempUnblocks[platform];
+
+      if (item && item.expireTime) {
+        const remainingSec = Math.ceil((item.expireTime - Date.now()) / 1000);
+        if (remainingSec <= 15) {
+          updateCountdownWidget(remainingSec);
+        }
+      } else {
+        const widget = document.getElementById('kill-addiction-countdown-widget');
+        if (widget) widget.remove();
+      }
+    });
+  }, 1000);
+
   // --------------------------------------------------------------------------
   // 1. Settings & Platform State Manager
   // --------------------------------------------------------------------------
   function applySettings() {
-    chrome.storage.local.get(['facebook', 'youtube', 'tiktok', 'instagram', 'threads', 'zappedSelectors'], (res) => {
-      settings.facebook = res.facebook !== false;
-      settings.youtube = res.youtube !== false;
-      settings.tiktok = res.tiktok !== false;
-      settings.instagram = res.instagram !== false;
-      settings.threads = res.threads !== false;
-      settings.zappedSelectors = res.zappedSelectors || [];
+    chrome.storage.local.get(
+      ['facebook', 'youtube', 'tiktok', 'instagram', 'threads', 'customBlockedDomains', 'zappedSelectors'],
+      (res) => {
+        settings.facebook = res.facebook !== false;
+        settings.youtube = res.youtube !== false;
+        settings.tiktok = res.tiktok !== false;
+        settings.instagram = res.instagram !== false;
+        settings.threads = res.threads !== false;
+        settings.customBlockedDomains = res.customBlockedDomains || [];
+        settings.zappedSelectors = res.zappedSelectors || [];
 
-      const html = document.documentElement;
+        const html = document.documentElement;
 
-      // Facebook
-      if (hostname.includes('facebook.com')) {
-        if (window.location.pathname.startsWith('/messages')) {
-          html.removeAttribute('data-kill-facebook');
-          restoreFacebookFeed();
+        // Custom Domain FULL SITE BLOCKING Check (Chặn HẲN hoàn toàn)
+        const matchedCustomDomain = checkCustomDomainBlock(hostname, settings.customBlockedDomains);
+        if (matchedCustomDomain) {
+          html.setAttribute('data-kill-custom-blocked', 'true');
+          renderFullSiteBlockerOverlay(matchedCustomDomain);
           return;
         }
 
-        if (settings.facebook) {
-          html.setAttribute('data-kill-facebook', 'true');
-          cleanFacebookFeed();
-        } else {
-          html.removeAttribute('data-kill-facebook');
-          restoreFacebookFeed();
-        }
-      }
+        // Facebook
+        if (hostname.includes('facebook.com')) {
+          if (window.location.pathname.startsWith('/messages')) {
+            html.removeAttribute('data-kill-facebook');
+            restoreFacebookFeed();
+            return;
+          }
 
-      // YouTube
-      if (hostname.includes('youtube.com')) {
-        if (settings.youtube) {
-          html.setAttribute('data-kill-youtube', 'true');
-          cleanYouTubeFeed();
-        } else {
-          html.removeAttribute('data-kill-youtube');
-        }
-      }
-
-      // TikTok
-      if (hostname.includes('tiktok.com')) {
-        if (settings.tiktok) {
-          html.setAttribute('data-kill-tiktok', 'true');
-          cleanTikTokFeed();
-        } else {
-          html.removeAttribute('data-kill-tiktok');
-          restoreTikTokFeed();
-        }
-      }
-
-      // Instagram
-      if (hostname.includes('instagram.com')) {
-        const isDirect = window.location.pathname.startsWith('/direct/');
-        if (isDirect) {
-          html.setAttribute('data-is-ig-direct', 'true');
-        } else {
-          html.removeAttribute('data-is-ig-direct');
+          if (settings.facebook) {
+            html.setAttribute('data-kill-facebook', 'true');
+            cleanFacebookFeed();
+          } else {
+            html.removeAttribute('data-kill-facebook');
+            restoreFacebookFeed();
+          }
         }
 
-        if (settings.instagram && !isDirect) {
-          html.setAttribute('data-kill-instagram', 'true');
-          cleanInstagramFeed();
-        } else {
-          html.removeAttribute('data-kill-instagram');
-          restoreInstagramFeed();
+        // YouTube
+        if (hostname.includes('youtube.com')) {
+          if (settings.youtube) {
+            html.setAttribute('data-kill-youtube', 'true');
+            cleanYouTubeFeed();
+          } else {
+            html.removeAttribute('data-kill-youtube');
+          }
+        }
+
+        // TikTok
+        if (hostname.includes('tiktok.com')) {
+          if (settings.tiktok) {
+            html.setAttribute('data-kill-tiktok', 'true');
+            cleanTikTokFeed();
+          } else {
+            html.removeAttribute('data-kill-tiktok');
+            restoreTikTokFeed();
+          }
+        }
+
+        // Instagram
+        if (hostname.includes('instagram.com')) {
+          const isDirect = window.location.pathname.startsWith('/direct/');
+          if (isDirect) {
+            html.setAttribute('data-is-ig-direct', 'true');
+          } else {
+            html.removeAttribute('data-is-ig-direct');
+          }
+
+          if (settings.instagram && !isDirect) {
+            html.setAttribute('data-kill-instagram', 'true');
+            cleanInstagramFeed();
+          } else {
+            html.removeAttribute('data-kill-instagram');
+            restoreInstagramFeed();
+          }
+        }
+
+        // Threads
+        if (hostname.includes('threads')) {
+          if (settings.threads) {
+            html.setAttribute('data-kill-threads', 'true');
+            cleanThreadsFeed();
+          } else {
+            html.removeAttribute('data-kill-threads');
+            restoreThreadsFeed();
+          }
+        }
+
+        // Apply user zapped selectors
+        if (Array.isArray(settings.zappedSelectors)) {
+          settings.zappedSelectors.forEach((sel) => {
+            try {
+              document.querySelectorAll(sel).forEach((el) => {
+                if (!isInsideChat(el)) {
+                  el.classList.add('kill-addiction-zapped');
+                }
+              });
+            } catch (e) {}
+          });
         }
       }
-
-      // Threads (Support threads.net and threads.com)
-      if (hostname.includes('threads')) {
-        if (settings.threads) {
-          html.setAttribute('data-kill-threads', 'true');
-          cleanThreadsFeed();
-        } else {
-          html.removeAttribute('data-kill-threads');
-          restoreThreadsFeed();
-        }
-      }
-
-      // Apply user zapped selectors
-      if (Array.isArray(settings.zappedSelectors)) {
-        settings.zappedSelectors.forEach((sel) => {
-          try {
-            document.querySelectorAll(sel).forEach((el) => {
-              if (!isInsideChat(el)) {
-                el.classList.add('kill-addiction-zapped');
-              }
-            });
-          } catch (e) {}
-        });
-      }
-    });
+    );
   }
 
   // --------------------------------------------------------------------------
@@ -486,6 +672,8 @@
         el.classList.remove('kill-addiction-zapped');
       });
       applySettings();
+    } else if (req.action === 'TEMP_UNBLOCK_EXPIRED') {
+      window.location.reload();
     }
   });
 })();

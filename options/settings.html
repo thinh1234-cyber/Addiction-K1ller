@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kill Addiction - Cài Đặt & Thống Kê Thời Gian</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+
+<body data-theme="dark">
+  <div class="dashboard-container">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="brand">
+        <span class="logo-icon">🛡️</span>
+        <div class="brand-text">
+          <h1>Kill Addiction</h1>
+          <p>Cài đặt & Biểu đồ thống kê thời gian Chrome</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <select id="theme-select" title="Chọn Theme UI">
+          <option value="dark">Dark Slate</option>
+          <option value="cappuccino">Cappuccino Coffee</option>
+          <option value="pink">Sakura Pink</option>
+          <option value="light-white">Light White</option>
+          <option value="gray">Slate Gray</option>
+          <option value="dracula">Dracula Purple</option>
+          <option value="one-dark-pro">One Dark Pro</option>
+          <option value="monokai">Monokai Pro</option>
+          <option value="cyberpunk">Cyberpunk Neon</option>
+          <option value="solarized-dark">Solarized Teal</option>
+        </select>
+        <span class="badge">V2.0.0</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="analytics">📊 Thống Kê Thời Gian</button>
+      <button class="tab-btn" data-tab="config">⚙️ Cấu Hình Nền Tảng</button>
+      <button class="tab-btn" data-tab="zapper">🎯 Quản Lý Zapped Elements</button>
+    </nav>
+
+    <!-- TAB 1: Analytics Dashboard -->
+    <main id="tab-analytics" class="tab-content active">
+      <!-- Metric Cards -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">⏱️</div>
+          <div class="metric-info">
+            <span class="metric-title">Tổng thời gian Chrome (Hôm nay)</span>
+            <span id="metric-today-time" class="metric-value">0 phút</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">🌐</div>
+          <div class="metric-info">
+            <span class="metric-title">Số trang Web đã duyệt</span>
+            <span id="metric-domain-count" class="metric-value">0 domains</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">🏆</div>
+          <div class="metric-info">
+            <span class="metric-title">Trang dùng nhiều nhất</span>
+            <span id="metric-top-domain" class="metric-value">--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Weekly Trend Chart Card with Week Controls -->
+      <section class="chart-card weekly-chart-card">
+        <div class="card-header">
+          <h3>📅 Tổng Thời Gian Sử Dụng Web Cả Tuần</h3>
+          <div class="week-nav-group">
+            <button id="prev-week-btn" class="filter-btn" title="Xem tuần trước">◄ Tuần trước</button>
+            <span id="current-week-label" class="week-label">Tuần này</span>
+            <button id="next-week-btn" class="filter-btn" disabled title="Xem tuần sau">Tuần sau ►</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="weekly-chart"></canvas>
+        </div>
+      </section>
+
+      <!-- Charts Grid -->
+      <section class="charts-grid">
+        <div class="chart-card main-chart">
+          <div class="card-header">
+            <h3>📈 Top 5 Webs Truy Cập Nhiều Nhất</h3>
+            <div class="filter-group">
+              <button class="filter-btn active" data-range="today">Hôm nay</button>
+              <button class="filter-btn" data-range="week">7 ngày qua</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="bar-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card side-chart">
+          <div class="card-header">
+            <h3>🍩 Tỷ Lệ Sử Dụng Tất Cả Webs</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="donut-chart"></canvas>
+          </div>
+
+          <!-- Interactive Donut Slice Info Box -->
+          <div id="donut-detail-card" class="donut-detail-card">
+            <span id="donut-detail-close" class="close-btn">✕</span>
+            <h4 id="donut-detail-title">Chi Tiết Domain</h4>
+            <p id="donut-detail-time">--</p>
+            <p id="donut-detail-percent">--% tổng thời gian</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Detailed Domain Ranking Table -->
+      <section class="domain-table-card">
+        <h3>📋 Danh Sách Chi Tiết Thời Gian Theo Root Domain</h3>
+        <div class="table-wrapper">
+          <table class="domain-table">
+            <thead>
+              <tr>
+                <th>Tên Trang Web (Root Domain)</th>
+                <th>Thời Gian Sử Dụng</th>
+                <th>Tỷ Lệ Percent</th>
+              </tr>
+            </thead>
+            <tbody id="domain-list-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 2: Platform Config & Custom Domain Blocker -->
+    <main id="tab-config" class="tab-content">
+      <section class="config-card">
+        <h3>⚙️ Tùy Chỉnh Bật/Tắt Bảng Tin Nền Tảng Mặc Định</h3>
+        <p class="section-desc">Chỉ ẩn Newsfeed & bài viết gây xao nhãng. Giữ 100% tính năng Chat/Messenger & Tìm kiếm
+        </p>
+
+        <div class="config-list">
+          <div class="config-item">
+            <div class="item-meta">
+              <span class="tag fb">FB</span>
+              <div>
+                <strong id="cfg-label-facebook">Facebook</strong>
+                <p>Ẩn Newsfeed & Stories trang chủ, giữ Messenger chat</p>
+              </div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg-facebook">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="config-item">
+            <div class="item-meta">
+              <span class="tag yt">YT</span>
+              <div>
+                <strong id="cfg-label-youtube">YouTube</strong>
+                <p>Ẩn video đề xuất trang chủ & Shorts, giữ Tìm kiếm</p>
+              </div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg-youtube">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="config-item">
+            <div class="item-meta">
+              <span class="tag tt">TT</span>
+              <div>
+                <strong id="cfg-label-tiktok">TikTok</strong>
+                <p>Ẩn luồng video tự động cuộn (FYP)</p>
+              </div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg-tiktok">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="config-item">
+            <div class="item-meta">
+              <span class="tag ig">IG</span>
+              <div>
+                <strong id="cfg-label-instagram">Instagram</strong>
+                <p>Ẩn Timeline trang chủ, giữ Direct Messages (/direct/)</p>
+              </div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg-instagram">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="config-item">
+            <div class="item-meta">
+              <span class="tag th">TH</span>
+              <div>
+                <strong id="cfg-label-threads">Threads</strong>
+                <p>Ẩn toàn bộ bài viết Timeline trang chủ</p>
+              </div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cfg-threads">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Custom Domain & Subdomain Blocker Section -->
+        <div class="custom-block-section">
+          <h3>🚫 Chặn Trang Web & Subdomain Tùy Chỉnh (Chặn Hẳn 100%)</h3>
+          <p class="section-desc">
+            Nhập tên miền trang web muốn <strong>Chặn Hẳn Hoàn Toàn</strong> (vd: <code>reddit.com</code> hoặc
+            <code>twitter.com</code>).
+            Khác với 5 MXH mặc định (chỉ ẩn feed), các trang web tùy chỉnh thêm ở đây và tất cả Subdomain sẽ bị
+            <strong>Chặn Hẳn 100%</strong> không thể truy cập!
+          </p>
+
+          <div class="custom-block-form">
+            <input type="text" id="custom-domain-input" placeholder="Ví dụ: reddit.com, twitter.com...">
+            <button id="add-custom-domain-btn" class="btn-primary-inline">Thêm Domain Chặn Hẳn</button>
+          </div>
+
+          <div id="custom-domain-list" class="custom-domain-tags">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 3: Zapped Elements Manager -->
+    <main id="tab-zapper" class="tab-content">
+      <section class="config-card">
+        <div class="card-header">
+          <div>
+            <h3>🎯 Danh Sách Bộ Chọn CSS Đã Ẩn Thủ Công</h3>
+            <p class="section-desc">Các phần tử trang web bạn đã click ẩn bằng công cụ Zapper</p>
+          </div>
+          <button id="clear-all-zapped" class="btn-danger">Xóa Tất Cả Phần Tử Zapped</button>
+        </div>
+
+        <div id="zapped-list-container" class="zapped-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="chart_engine.js"></script>
+  <script src="settings.js"></script>
+</body>
+
+</html>
