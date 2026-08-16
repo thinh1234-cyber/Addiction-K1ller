@@ -12,10 +12,15 @@ function extractRootDomain(url) {
   if (!url) return null;
   try {
     const parsed = new URL(url);
-    const host = parsed.hostname.toLowerCase();
+    let host = parsed.hostname.toLowerCase().trim().replace(/\.$/, '');
 
     if (['chrome:', 'chrome-extension:', 'edge:', 'about:', 'file:'].includes(parsed.protocol)) {
       return null;
+    }
+
+    // IP address detection (IPv4 / IPv6)
+    if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(host) || host.startsWith('[')) {
+      return host;
     }
 
     const parts = host.replace(/^www\./, '').split('.');
@@ -23,8 +28,12 @@ function extractRootDomain(url) {
       return parts.join('.');
     }
 
-    // Handle multi-part TLDs (e.g. .co.uk, .com.vn, .edu.vn, .gov.vn, .net.vn, .org.vn, .co.jp)
-    const multiPartTlds = ['co.uk', 'com.vn', 'edu.vn', 'gov.vn', 'net.vn', 'org.vn', 'co.jp', 'com.au', 'com.br', 'co.in'];
+    // Extended international multi-part TLDs list
+    const multiPartTlds = [
+      'co.uk', 'com.vn', 'edu.vn', 'gov.vn', 'net.vn', 'org.vn', 'co.jp', 'com.au', 'com.br', 'co.in',
+      'co.kr', 'com.ng', 'co.nz', 'com.tw', 'com.sg', 'com.hk', 'org.uk', 'edu.au', 'gov.uk', 'ac.uk',
+      'com.my', 'com.ph', 'com.tr', 'co.id', 'com.mx', 'co.th', 'com.sa', 'org.au', 'net.au'
+    ];
     const lastTwo = parts.slice(-2).join('.');
 
     if (multiPartTlds.includes(lastTwo) && parts.length >= 3) {
@@ -57,19 +66,26 @@ async function flushActiveTime() {
   if (durationSec <= 0) return;
 
   const todayKey = getTodayKey();
+  const currentHour = new Date().getHours();
 
   chrome.storage.local.get({ trackingData: {} }, (res) => {
     const trackingData = res.trackingData || {};
     if (!trackingData[todayKey]) {
       trackingData[todayKey] = {
         totalSeconds: 0,
-        domains: {}
+        domains: {},
+        hourly: new Array(24).fill(0)
       };
     }
 
     const dayData = trackingData[todayKey];
+    if (!dayData.hourly) {
+      dayData.hourly = new Array(24).fill(0);
+    }
+
     dayData.totalSeconds = (dayData.totalSeconds || 0) + durationSec;
     dayData.domains[activeSession.domain] = (dayData.domains[activeSession.domain] || 0) + durationSec;
+    dayData.hourly[currentHour] = (dayData.hourly[currentHour] || 0) + durationSec;
 
     chrome.storage.local.set({ trackingData });
   });
@@ -124,6 +140,19 @@ function isPlatformUrl(url, platform) {
   return false;
 }
 
+// Initialize active domain on service worker start / wake-up
+async function initActiveDomain() {
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    if (tab && tab.url) {
+      switchActiveDomain(tab.url);
+    }
+  } catch (e) {}
+}
+
+// Initial Run on Service Worker Load
+initActiveDomain();
+
 // Listen to Tab Activation
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   try {
@@ -134,10 +163,13 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
   } catch (e) {}
 });
 
-// Listen to Tab URL Changes
+// Listen to Tab URL & Status Changes
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (tab.active && changeInfo.url) {
-    switchActiveDomain(changeInfo.url);
+  if (tab && tab.active && tab.url) {
+    const newDomain = extractRootDomain(tab.url);
+    if (newDomain && newDomain !== activeSession.domain) {
+      switchActiveDomain(tab.url);
+    }
   }
 });
 
@@ -166,7 +198,7 @@ chrome.idle.onStateChanged.addListener(async (newState) => {
     activeSession.startTime = null;
   } else {
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
       if (tab && tab.url) {
         switchActiveDomain(tab.url);
       }
@@ -174,9 +206,17 @@ chrome.idle.onStateChanged.addListener(async (newState) => {
   }
 });
 
-// Flush data periodically every 15 seconds
-setInterval(() => {
+// Flush data periodically & auto-recover active session domain if empty
+setInterval(async () => {
+  if (!activeSession.domain) {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      if (tab && tab.url) {
+        switchActiveDomain(tab.url);
+      }
+    } catch (e) {}
+  }
   if (activeSession.domain) {
     flushActiveTime();
   }
-}, 15000);
+}, 5000);

@@ -1,6 +1,6 @@
 # 🛡️ Addiction K1ller
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/thinh1234-cyber/Addiction-K1ller)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/thinh1234-cyber/Addiction-K1ller)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Chrome Extension](https://img.shields.io/badge/manifest-v3-orange.svg)](manifest.json)
 

@@ -15,41 +15,50 @@
       <div class="brand">
         <span class="logo-icon">🛡️</span>
         <div class="brand-text">
-          <h1>Kill Addiction</h1>
-          <p>Cài đặt & Biểu đồ thống kê thời gian Chrome</p>
+          <h1 id="i18n-title">Kill Addiction</h1>
+          <p id="i18n-subtitle">Cài đặt & Biểu đồ thống kê thời gian Chrome</p>
         </div>
       </div>
 
       <div class="header-controls">
-        <select id="theme-select" title="Chọn Theme UI">
-          <option value="dark">Dark Slate</option>
-          <option value="cappuccino">Cappuccino Coffee</option>
-          <option value="pink">Sakura Pink</option>
-          <option value="light-white">Light White</option>
-          <option value="gray">Slate Gray</option>
-          <option value="dracula">Dracula Purple</option>
-          <option value="one-dark-pro">One Dark Pro</option>
-          <option value="monokai">Monokai Pro</option>
-          <option value="cyberpunk">Cyberpunk Neon</option>
-          <option value="solarized-dark">Solarized Teal</option>
-        </select>
-        <span class="badge">V2.0.0</span>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <select id="theme-select" title="Chọn Theme UI">
+            <option value="dark">Dark Slate</option>
+            <option value="cappuccino">Cappuccino Coffee</option>
+            <option value="pink">Sakura Pink</option>
+            <option value="light-white">Light White</option>
+            <option value="gray">Slate Gray</option>
+            <option value="dracula">Dracula Purple</option>
+            <option value="one-dark-pro">One Dark Pro</option>
+            <option value="monokai">Monokai Pro</option>
+            <option value="cyberpunk">Cyberpunk Neon</option>
+            <option value="solarized-dark">Solarized Teal</option>
+          </select>
+
+          <select id="lang-select" title="Select Language / Chọn Ngôn Ngữ">
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="en">🇬🇧 English</option>
+          </select>
+        </div>
+
+        <span class="badge">V2.1.0</span>
+        <button id="update-btn" class="update-btn" title="Kiểm tra & Cập nhật phiên bản từ GitHub">Update</button>
       </div>
     </header>
 
     <!-- Navigation Tabs -->
     <nav class="nav-tabs">
-      <button class="tab-btn active" data-tab="analytics">📊 Thống Kê Thời Gian</button>
-      <button class="tab-btn" data-tab="config">⚙️ Cấu Hình Nền Tảng</button>
-      <button class="tab-btn" data-tab="zapper">🎯 Quản Lý Zapped Elements</button>
+      <button class="tab-btn active" data-tab="analytics" id="tab-label-analytics">📊 Thống Kê Thời Gian</button>
+      <button class="tab-btn" data-tab="performance" id="tab-label-performance">⚡ Hiệu Suất</button>
+      <button class="tab-btn" data-tab="config" id="tab-label-config">⚙️ Cấu Hình</button>
     </nav>
 
     <!-- TAB 1: Analytics Dashboard -->
     <main id="tab-analytics" class="tab-content active">
-      <!-- 1. Weekly Trend Chart Card with Week Controls (Line 1 - Top) -->
+      <!-- 1. Weekly Trend Chart Card with Week Controls -->
       <section class="chart-card weekly-chart-card">
         <div class="card-header">
-          <h3>📅 Tổng Thời Gian Sử Dụng Web Cả Tuần (Click Ngày Để Xem Chi Tiết)</h3>
+          <h3 id="i18n-weekly-title">📅 Tổng Thời Gian Sử Dụng Web Cả Tuần</h3>
           <div class="week-nav-group">
             <button id="prev-week-btn" class="filter-btn" title="Xem tuần trước">◄ Tuần trước</button>
             <span id="current-week-label" class="week-label">Tuần này</span>
@@ -61,14 +70,14 @@
         </div>
       </section>
 
-      <!-- 2. Charts Grid: Top 5 Bar Chart + Donut Chart (Line 2) -->
+      <!-- 2. Charts Grid: Top 5 Bar Chart + Donut Chart -->
       <section class="charts-grid">
         <div class="chart-card main-chart">
           <div class="card-header">
-            <h3>📈 Top 5 Webs Truy Cập Nhiều Nhất</h3>
+            <h3 id="i18n-top5-title">📈 Top 5 Webs Truy Cập Nhiều Nhất</h3>
             <div class="filter-group">
-              <button class="filter-btn active" data-range="today">Hôm nay</button>
-              <button class="filter-btn" data-range="week">Cả tuần</button>
+              <button class="filter-btn active" data-range="today" id="i18n-btn-today">Hôm nay</button>
+              <button class="filter-btn" data-range="week" id="i18n-btn-week">Cả tuần</button>
             </div>
           </div>
           <div class="chart-wrapper">
@@ -78,7 +87,7 @@
 
         <div class="chart-card side-chart">
           <div class="card-header">
-            <h3>🍩 Tỷ Lệ Sử Dụng Tất Cả Webs</h3>
+            <h3 id="i18n-donut-title">🍩 Tỷ Lệ Sử Dụng Tất Cả Webs</h3>
           </div>
           <div class="chart-wrapper">
             <canvas id="donut-chart"></canvas>
@@ -94,7 +103,7 @@
         </div>
       </section>
 
-      <!-- 3. Metric Cards (Line 3) -->
+      <!-- 3. Metric Cards -->
       <section class="metrics-grid">
         <div class="metric-card">
           <div class="metric-icon">⏱️</div>
@@ -107,7 +116,7 @@
         <div class="metric-card">
           <div class="metric-icon">🌐</div>
           <div class="metric-info">
-            <span class="metric-title">Số trang Web đã duyệt</span>
+            <span class="metric-title" id="i18n-domain-count-label">Số trang Web đã duyệt</span>
             <span id="metric-domain-count" class="metric-value">0 domains</span>
           </div>
         </div>
@@ -115,22 +124,22 @@
         <div class="metric-card">
           <div class="metric-icon">🏆</div>
           <div class="metric-info">
-            <span class="metric-title">Trang dùng nhiều nhất</span>
+            <span class="metric-title" id="i18n-top-domain-label">Trang dùng nhiều nhất</span>
             <span id="metric-top-domain" class="metric-value">--</span>
           </div>
         </div>
       </section>
 
-      <!-- 4. Detailed Domain Ranking Table (Line 4 - Bottom) -->
+      <!-- 4. Detailed Domain Ranking Table -->
       <section class="domain-table-card">
-        <h3>📋 Danh Sách Chi Tiết Thời Gian Theo Root Domain</h3>
+        <h3 id="i18n-table-title">📋 Danh Sách Chi Tiết Thời Gian Theo Root Domain</h3>
         <div class="table-wrapper">
           <table class="domain-table">
             <thead>
               <tr>
-                <th>Tên Trang Web (Root Domain)</th>
-                <th>Thời Gian Sử Dụng</th>
-                <th>Tỷ Lệ Percent</th>
+                <th id="i18n-th-domain">Tên Trang Web (Root Domain)</th>
+                <th id="i18n-th-time">Thời Gian Sử Dụng</th>
+                <th id="i18n-th-percent">Tỷ Lệ Percent</th>
               </tr>
             </thead>
             <tbody id="domain-list-body">
@@ -141,20 +150,113 @@
       </section>
     </main>
 
-    <!-- TAB 2: Platform Config & Custom Domain Blocker -->
+    <!-- TAB 2: Performance & Focus Insights -->
+    <main id="tab-performance" class="tab-content">
+      <!-- Performance Time Range Filter -->
+      <div class="card-header" style="margin-bottom:16px;">
+        <h3 id="i18n-perf-title">📊 Chỉ Số Phân Tích Hiệu Suất Tập Trung</h3>
+        <div class="filter-group">
+          <button class="filter-btn active" data-perf-range="today" id="i18n-perf-today">Hôm nay</button>
+          <button class="filter-btn" data-perf-range="week" id="i18n-perf-week">Tuần này</button>
+          <button class="filter-btn" data-perf-range="month" id="i18n-perf-month">Tháng này</button>
+        </div>
+      </div>
+
+      <!-- 2 Performance Metric Cards -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">🏆</div>
+          <div class="metric-info">
+            <span class="metric-title" id="i18n-focus-score-label">Điểm Tập Trung</span>
+            <span id="focus-score-value" class="metric-value">-- / 100</span>
+            <p id="focus-score-advice" class="section-desc" style="margin-top:2px; margin-bottom:0; font-size:11px;">
+              Calculating...
+            </p>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">⚠️</div>
+          <div class="metric-info">
+            <span class="metric-title" id="i18n-distraction-index-label">Tỷ Lệ Xao Nhãng</span>
+            <span id="distraction-index-value" class="metric-value" style="color:#38bdf8;">--%</span>
+            <p id="distraction-index-advice" class="section-desc" style="margin-top:2px; margin-bottom:0; font-size:11px;">Calculating...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 24-Hour Hourly Usage Heatmap Card -->
+      <section class="chart-card weekly-chart-card">
+        <div class="card-header">
+          <h3 id="i18n-heatmap-title">🔥 Biểu Đồ Nhiệt Mật Độ Sử Dụng Web 24 Giờ Trong Ngày</h3>
+        </div>
+        <p class="section-desc" id="i18n-heatmap-desc">Rê chuột vào các cột giờ (0h đến 23h) để kiểm tra thời điểm bạn hoạt động nhiều nhất.</p>
+        <div class="chart-wrapper">
+          <canvas id="heatmap-chart"></canvas>
+        </div>
+      </section>
+
+      <!-- Pastel Theme-Synced GitHub Calendar Heatmap for Distraction Usage -->
+      <section class="domain-table-card">
+        <div class="card-header" style="margin-bottom:12px; flex-wrap:wrap; gap:12px;">
+          <h3 id="i18n-contrib-title">📅 Biểu Đồ Nhiệt Xao Nhãng Theo Ngày</h3>
+          
+          <div style="display:flex; align-items:center; gap:12px; margin-left:auto; flex-wrap:wrap;">
+            <!-- View Mode Switch: Month / Week -->
+            <div class="filter-group">
+              <button id="contrib-mode-month" class="filter-btn active">Tháng</button>
+              <button id="contrib-mode-week" class="filter-btn">Tuần</button>
+            </div>
+
+            <!-- Calendar Nav Controls -->
+            <div class="week-nav-group">
+              <button id="contrib-prev-btn" class="filter-btn" title="Trở về trước">◄</button>
+              <span id="contrib-date-label" class="week-label" style="min-width:110px; text-align:center;">Tháng 8/2026</span>
+              <button id="contrib-next-btn" class="filter-btn" title="Tiến về sau">►</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pastel Theme-Synced Legend Bar -->
+        <div class="heatmap-legend-pastel">
+          <span id="i18n-legend-low" style="font-size:11px; color:#94a3b8;">Ít giải trí</span>
+          <div id="pastel-legend-steps" class="pastel-steps"></div>
+          <span id="i18n-legend-high" style="font-size:11px; color:#94a3b8;">Nhiều</span>
+        </div>
+
+        <p class="section-desc" id="i18n-contrib-desc" style="margin-top:8px;">Màu sắc pastel đồng bộ theo giao diện, biểu thị cấp độ giải trí từ dịu mát đến ấm đậm.</p>
+
+        <!-- Calendar Heatmap Grid Container -->
+        <div class="calendar-heatmap-container">
+          <div id="calendar-weekday-header" class="calendar-weekday-header">
+            <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
+          </div>
+          <div id="github-contrib-grid" class="contrib-calendar-grid">
+            <!-- Dynamically Populated Pastel Squares -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 3: Unified Configuration Tab -->
     <main id="tab-config" class="tab-content">
       <section class="config-card">
-        <h3>⚙️ Tùy Chỉnh Bật/Tắt Bảng Tin Nền Tảng Mặc Định</h3>
-        <p class="section-desc">Chỉ ẩn Newsfeed & bài viết gây xao nhãng. Giữ 100% tính năng Chat/Messenger & Tìm kiếm
-        </p>
+        <!-- Section 1: Default Platform Feed Switches -->
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <h3 id="i18n-cfg-platforms-title">⚙️ Tùy Chỉnh Bật/Tắt Bảng Tin Nền Tảng Mặc Định</h3>
+          <div id="strict-lock-badge" class="strict-lock-badge" style="display:none;">
+            🔒 STRICT FOCUS LOCK ACTIVE
+          </div>
+        </div>
+        <p class="section-desc" id="i18n-cfg-platforms-desc">Chỉ ẩn Newsfeed & bài viết gây xao nhãng. Giữ 100% tính năng Chat/Messenger & Tìm kiếm</p>
 
-        <div class="config-list">
+        <div id="platform-config-list" class="config-list">
           <div class="config-item">
             <div class="item-meta">
               <span class="tag fb">FB</span>
               <div>
                 <strong id="cfg-label-facebook">Facebook</strong>
-                <p>Ẩn Newsfeed & Stories trang chủ, giữ Messenger chat</p>
+                <p id="i18n-fb-desc">Ẩn Newsfeed & Stories trang chủ, giữ Messenger chat</p>
               </div>
             </div>
             <label class="switch">
@@ -168,7 +270,7 @@
               <span class="tag yt">YT</span>
               <div>
                 <strong id="cfg-label-youtube">YouTube</strong>
-                <p>Ẩn video đề xuất trang chủ & Shorts, giữ Tìm kiếm</p>
+                <p id="i18n-yt-desc">Ẩn video đề xuất trang chủ & Shorts, giữ Tìm kiếm</p>
               </div>
             </div>
             <label class="switch">
@@ -182,7 +284,7 @@
               <span class="tag tt">TT</span>
               <div>
                 <strong id="cfg-label-tiktok">TikTok</strong>
-                <p>Ẩn luồng video tự động cuộn (FYP)</p>
+                <p id="i18n-tt-desc">Ẩn luồng video tự động cuộn (FYP)</p>
               </div>
             </div>
             <label class="switch">
@@ -196,7 +298,7 @@
               <span class="tag ig">IG</span>
               <div>
                 <strong id="cfg-label-instagram">Instagram</strong>
-                <p>Ẩn Timeline trang chủ, giữ Direct Messages (/direct/)</p>
+                <p id="i18n-ig-desc">Ẩn Timeline trang chủ, giữ Direct Messages (/direct/)</p>
               </div>
             </div>
             <label class="switch">
@@ -210,7 +312,7 @@
               <span class="tag th">TH</span>
               <div>
                 <strong id="cfg-label-threads">Threads</strong>
-                <p>Ẩn toàn bộ bài viết Timeline trang chủ</p>
+                <p id="i18n-th-desc">Ẩn toàn bộ bài viết Timeline trang chủ</p>
               </div>
             </div>
             <label class="switch">
@@ -220,14 +322,28 @@
           </div>
         </div>
 
-        <!-- Custom Domain & Subdomain Blocker Section -->
-        <div class="custom-block-section">
-          <h3>🚫 Chặn Trang Web & Subdomain Tùy Chỉnh (Chặn Hẳn 100%)</h3>
-          <p class="section-desc">
-            Nhập tên miền trang web muốn <strong>Chặn Hẳn Hoàn Toàn</strong> (vd: <code>reddit.com</code> hoặc
-            <code>twitter.com</code>).
-            Khác với 5 MXH mặc định (chỉ ẩn feed), các trang web tùy chỉnh thêm ở đây và tất cả Subdomain sẽ bị
-            <strong>Chặn Hẳn 100%</strong> không thể truy cập!
+        <!-- Section 2: Strict Focus Mode Lock Config -->
+        <div class="custom-block-section" style="margin-top:24px;">
+          <h3 id="i18n-strict-title">🔒 Chế Độ Tập Trung Cao Độ</h3>
+          <p class="section-desc" id="i18n-strict-desc">
+            Khóa 100% các nút Bật/Tắt Tạm Thời & Danh sách Chặn Tùy Chỉnh trong thời gian thiết lập chống tự phá rào.
+          </p>
+
+          <div class="custom-block-form" style="align-items:center;">
+            <select id="focus-duration-select" style="background:var(--item-bg); color:var(--text-main); border:1px solid var(--card-border); padding:10px 14px; border-radius:8px; font-size:13px;">
+              <option value="25" id="i18n-opt-25">25 Phút (Kỹ thuật Pomodoro)</option>
+              <option value="45" id="i18n-opt-45">45 Phút (Phiên Deep Work)</option>
+              <option value="60" id="i18n-opt-60">60 Phút (Hardcore Focus)</option>
+            </select>
+            <button id="start-strict-focus-btn" class="btn-primary-inline" style="background:#f43f5e; color:#fff;">🚀 Kích Hoạt Strict Focus</button>
+          </div>
+        </div>
+
+        <!-- Section 3: Custom Domain Blocker WITH Nested Sub-settings Side-by-Side -->
+        <div class="custom-block-section" style="margin-top:24px;">
+          <h3 id="i18n-custom-block-title">🚫 Chặn Trang Web & Subdomain Tùy Chỉnh</h3>
+          <p class="section-desc" id="i18n-custom-block-desc">
+            Nhập tên miền trang web muốn <strong>Chặn Hẳn Hoàn Toàn</strong> (vd: <code>reddit.com</code> hoặc <code>twitter.com</code>). Tất cả Subdomain của trang cũng sẽ bị dừng hoàn toàn truy cập!
           </p>
 
           <div class="custom-block-form">
@@ -236,31 +352,109 @@
           </div>
 
           <div id="custom-domain-list" class="custom-domain-tags">
+            <!-- Dynamically populated custom domain tags -->
+          </div>
+
+          <!-- NESTED SUB-SETTINGS CONTAINER (COMPACT BALANCED FLEX GRID) -->
+          <div class="nested-sub-settings">
+            <div class="sub-settings-grid">
+              <!-- Sub-setting 1: Daily Quota Clock Countdown Widget (Compact 1-Line Inputs) -->
+              <div class="sub-setting-card quota-clock-card">
+                <div class="sub-card-header">
+                  <h4 id="i18n-quota-title" style="margin:0; font-size:13px; color:var(--text-main);">
+                    ⏱️ Giới Hạn Thời Gian Sử Dụng Trong Ngày
+                  </h4>
+                  <span id="quota-lock-badge" class="quota-lock-badge" style="display:none;">🔒 Khóa 3 ngày</span>
+                </div>
+
+                <p class="section-desc" id="i18n-quota-desc" style="font-size:11px; margin-top:4px; margin-bottom:8px;">
+                  Đặt ngân sách thời gian tối đa lướt từng domain mỗi ngày. Khi hết giờ tự động Chặn Hẳn 100%!
+                </p>
+
+                <!-- Clock Display Pill Widget -->
+                <div class="clock-display-widget">
+                  <div class="clock-circle">
+                    <span class="clock-icon">⏳</span>
+                    <div class="clock-text">
+                      <span id="quota-clock-timer">--:--:--</span>
+                      <small id="i18n-clock-sub">Ngân sách hôm nay</small>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Compact 1-Line Form: [ Domain ] [ Mins ] [ Save Button ] -->
+                <div class="compact-inline-form">
+                  <input type="text" id="quota-domain-input" placeholder="Domain (vd: reddit.com)" style="flex:1.5; min-width:120px;">
+                  <input type="number" id="quota-mins-input" placeholder="Phút" min="1" max="1440" style="width:70px; text-align:center;">
+                  <button id="add-quota-btn" class="btn-primary-inline" style="flex:1; white-space:nowrap; padding:8px 12px; font-size:12px;">🔒 Lưu & Khóa 3 Ngày</button>
+                </div>
+
+                <div id="quota-list-container" class="custom-domain-tags" style="margin-top:8px;"></div>
+              </div>
+
+              <!-- Sub-setting 2: Work Hours Schedule with Compact Layout -->
+              <div class="sub-setting-card schedule-card">
+                <div class="sub-card-header">
+                  <h4 id="i18n-schedule-title" style="margin:0; font-size:13px; color:var(--text-main);">
+                    📅 Khung Giờ Làm Việc Tự Động
+                  </h4>
+                  <label class="switch">
+                    <input type="checkbox" id="schedule-enable-switch">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <p class="section-desc" id="i18n-schedule-desc" style="font-size:11px; margin-top:4px; margin-bottom:8px;">
+                  Tự động kích hoạt tính năng chặn feed trong giờ hành chính.
+                </p>
+
+                <!-- Quick Preset Buttons -->
+                <div class="preset-buttons-group">
+                  <button class="preset-pill" data-start="08:00" data-end="17:00">🏢 08:00 - 17:00</button>
+                  <button class="preset-pill" data-start="09:00" data-end="18:00">💼 09:00 - 18:00</button>
+                </div>
+
+                <!-- Custom Time Picker Selectors -->
+                <div class="custom-time-picker-group" style="margin-top:10px;">
+                  <div class="time-picker-box">
+                    <span class="time-picker-label" id="i18n-time-from">Từ:</span>
+                    <select id="sched-start-h" class="time-select"></select>
+                    <span class="time-colon">:</span>
+                    <select id="sched-start-m" class="time-select"></select>
+                  </div>
+
+                  <div class="time-picker-box">
+                    <span class="time-picker-label" id="i18n-time-to">Đến:</span>
+                    <select id="sched-end-h" class="time-select"></select>
+                    <span class="time-colon">:</span>
+                    <select id="sched-end-m" class="time-select"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Zapped Elements Manager -->
+        <div class="custom-block-section" style="margin-top:24px;">
+          <div class="card-header" style="margin-bottom:8px;">
+            <div>
+              <h3 id="i18n-zapped-title">🎯 Bộ Chọn CSS Đã Ẩn Thủ Công</h3>
+              <p class="section-desc" style="margin-bottom:0;" id="i18n-zapped-desc">Các phần tử trang web bạn đã click ẩn trực tiếp bằng công cụ Zapper</p>
+            </div>
+            <button id="clear-all-zapped" class="btn-danger">Xóa Tất Cả Zapped</button>
+          </div>
+
+          <div id="zapped-list-container" class="zapped-grid">
             <!-- Dynamically populated -->
           </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- TAB 3: Zapped Elements Manager -->
-    <main id="tab-zapper" class="tab-content">
-      <section class="config-card">
-        <div class="card-header">
-          <div>
-            <h3>🎯 Danh Sách Bộ Chọn CSS Đã Ẩn Thủ Công</h3>
-            <p class="section-desc">Các phần tử trang web bạn đã click ẩn bằng công cụ Zapper</p>
-          </div>
-          <button id="clear-all-zapped" class="btn-danger">Xóa Tất Cả Phần Tử Zapped</button>
-        </div>
-
-        <div id="zapped-list-container" class="zapped-grid">
-          <!-- Dynamically populated -->
         </div>
       </section>
     </main>
   </div>
 
   <script src="chart_engine.js"></script>
+  <script src="settings.html.js" style="display:none;"></script>
   <script src="settings.js"></script>
 </body>
 

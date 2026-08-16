@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const inspectBtn = document.getElementById('inspect-btn');
   const resetZappedBtn = document.getElementById('reset-zapped-btn');
   const settingsBtn = document.getElementById('settings-btn');
-  const updateBtn = document.getElementById('update-btn');
 
   const platforms = ['facebook', 'youtube', 'tiktok', 'instagram', 'threads'];
 
@@ -75,14 +74,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Attach Switch OnChange Handlers
+  // Attach Switch OnChange Handlers with Strict Focus Lock Enforcement
   platforms.forEach((p) => {
     const checkbox = document.getElementById(p);
     if (checkbox) {
       checkbox.onchange = (e) => {
         const isChecked = e.target.checked;
 
-        chrome.storage.local.get(['tempUnblocks'], (res) => {
+        chrome.storage.local.get(['tempUnblocks', 'strictFocusUntil'], (res) => {
+          const now = Date.now();
+          if (res.strictFocusUntil && now < res.strictFocusUntil) {
+            const leftMins = Math.ceil((res.strictFocusUntil - now) / 60000);
+            alert(`🔒 Chế Độ Tập Trung Cao Độ đang kích hoạt (còn ${leftMins} phút)!\n\nKhông thể tắt chặn nền tảng trong thời gian này.`);
+            checkbox.checked = true; // revert state
+            updateSwitchesAndLabels();
+            return;
+          }
+
           const tempUnblocks = res.tempUnblocks || {};
 
           if (!isChecked) {
@@ -146,56 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.runtime.openOptionsPage();
       } else {
         window.open(chrome.runtime.getURL('options/settings.html'));
-      }
-    });
-  }
-
-  // 4. Update Button Handler (Auto Check Remote Manifest & Extension Reload)
-  function isNewerVersion(remote, current) {
-    const rParts = remote.split('.').map(Number);
-    const cParts = current.split('.').map(Number);
-    for (let i = 0; i < Math.max(rParts.length, cParts.length); i++) {
-      const r = rParts[i] || 0;
-      const c = cParts[i] || 0;
-      if (r > c) return true;
-      if (r < c) return false;
-    }
-    return false;
-  }
-
-  if (updateBtn) {
-    updateBtn.addEventListener('click', async () => {
-      const currentVersion = chrome.runtime.getManifest().version;
-      updateBtn.disabled = true;
-      updateBtn.textContent = '⏳ Check...';
-
-      try {
-        const response = await fetch(
-          'https://raw.githubusercontent.com/thinh1234-cyber/Addiction-K1ller/main/manifest.json?t=' + Date.now()
-        );
-        if (!response.ok) throw new Error('Network error');
-
-        const remoteManifest = await response.json();
-        const remoteVersion = remoteManifest.version;
-
-        if (isNewerVersion(remoteVersion, currentVersion)) {
-          updateBtn.textContent = '🔄 Updating...';
-          alert(`🎉 Đã tìm thấy bản mới V${remoteVersion}! Đang tự động cập nhật và reload extension...`);
-          setTimeout(() => {
-            chrome.runtime.reload();
-          }, 400);
-        } else {
-          updateBtn.textContent = '✓ Latest';
-          alert(`✅ Tiện ích đang ở phiên bản mới nhất (V${currentVersion})!\n\nTự động làm mới bộ nhớ extension...`);
-          setTimeout(() => {
-            chrome.runtime.reload();
-          }, 600);
-        }
-      } catch (err) {
-        updateBtn.textContent = '🔄 Reloading';
-        setTimeout(() => {
-          chrome.runtime.reload();
-        }, 400);
       }
     });
   }

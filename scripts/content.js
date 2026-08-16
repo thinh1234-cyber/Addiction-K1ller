@@ -70,11 +70,15 @@
   // Helper: Extract clean Root Domain (e.g., m.facebook.com -> facebook.com)
   function extractRootDomain(host) {
     if (!host) return '';
-    const cleanHost = host.toLowerCase().replace(/^www\./, '');
+    let cleanHost = host.toLowerCase().trim().replace(/^www\./, '').replace(/\.$/, '').split(':')[0];
     const parts = cleanHost.split('.');
     if (parts.length <= 2) return cleanHost;
 
-    const multiPartTlds = ['co.uk', 'com.vn', 'edu.vn', 'gov.vn', 'net.vn', 'org.vn', 'co.jp', 'com.au', 'com.br', 'co.in'];
+    const multiPartTlds = [
+      'co.uk', 'com.vn', 'edu.vn', 'gov.vn', 'net.vn', 'org.vn', 'co.jp', 'com.au', 'com.br', 'co.in',
+      'co.kr', 'com.ng', 'co.nz', 'com.tw', 'com.sg', 'com.hk', 'org.uk', 'edu.au', 'gov.uk', 'ac.uk',
+      'com.my', 'com.ph', 'com.tr', 'co.id', 'com.mx', 'co.th', 'com.sa', 'org.au', 'net.au'
+    ];
     const lastTwo = parts.slice(-2).join('.');
 
     if (multiPartTlds.includes(lastTwo) && parts.length >= 3) {
@@ -85,13 +89,31 @@
 
   // Helper: Is current domain or subdomain in custom blocked list?
   function checkCustomDomainBlock(host, blockedList) {
-    if (!Array.isArray(blockedList)) return null;
-    const cleanHost = host.toLowerCase().replace(/^www\./, '');
+    if (!Array.isArray(blockedList) || !host) return null;
+    const cleanHost = host.toLowerCase().trim().replace(/^www\./, '').replace(/\.$/, '').split(':')[0];
     const rootDom = extractRootDomain(host);
 
     for (const domain of blockedList) {
-      const cleanDomain = domain.toLowerCase().trim().replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
-      if (cleanDomain && (cleanHost === cleanDomain || cleanHost.endsWith('.' + cleanDomain) || rootDom === cleanDomain)) {
+      if (!domain) continue;
+      let cleanDomain = domain.toLowerCase().trim()
+        .replace(/^https?:\/\//, '')
+        .replace(/^www\./, '')
+        .replace(/\.$/, '')
+        .split('/')[0]
+        .split(':')[0];
+
+      if (!cleanDomain) continue;
+
+      if (cleanDomain.startsWith('*.')) {
+        cleanDomain = cleanDomain.substring(2);
+      }
+
+      if (
+        cleanHost === cleanDomain ||
+        cleanHost.endsWith('.' + cleanDomain) ||
+        rootDom === cleanDomain ||
+        (rootDom && rootDom === extractRootDomain(cleanDomain))
+      ) {
         return cleanDomain;
       }
     }
@@ -559,15 +581,63 @@
   }
 
   // --------------------------------------------------------------------------
-  // 7. DOM Inspector Zapper Mode
+  // 7. DOM Inspector Zapper Mode with Real-time Tooltip & ESC Key Cancel
   // --------------------------------------------------------------------------
   let isInspectMode = false;
   let hoveredElement = null;
+  let zapperToolbar = null;
+  let selectorTooltip = null;
+
+  function createZapperUI() {
+    if (!zapperToolbar) {
+      zapperToolbar = document.createElement('div');
+      zapperToolbar.className = 'kill-addiction-zapper-toolbar';
+      zapperToolbar.innerHTML = `
+        <span>🎯 CHẾ ĐỘ CHỌN THÀNH PHẦN (ZAPPER MODE)</span>
+        <span style="font-size:11px; opacity:0.8; font-weight:normal;">[Di chuột & click để xóa vĩnh viễn | Ấn ESC để hủy]</span>
+        <button id="kill-addiction-cancel-zapper">Thoát [ESC]</button>
+      `;
+      (document.body || document.documentElement).appendChild(zapperToolbar);
+
+      const cancelBtn = zapperToolbar.querySelector('#kill-addiction-cancel-zapper');
+      if (cancelBtn) {
+        cancelBtn.onclick = (e) => {
+          e.stopPropagation();
+          disableInspectMode();
+        };
+      }
+    }
+
+    if (!selectorTooltip) {
+      selectorTooltip = document.createElement('div');
+      selectorTooltip.className = 'kill-addiction-selector-tooltip';
+      selectorTooltip.style.display = 'none';
+      (document.body || document.documentElement).appendChild(selectorTooltip);
+    }
+  }
+
+  function removeZapperUI() {
+    if (zapperToolbar) {
+      zapperToolbar.remove();
+      zapperToolbar = null;
+    }
+    if (selectorTooltip) {
+      selectorTooltip.remove();
+      selectorTooltip = null;
+    }
+  }
+
+  function handleMouseMove(e) {
+    if (!isInspectMode || !selectorTooltip) return;
+    selectorTooltip.style.left = `${e.clientX + 14}px`;
+    selectorTooltip.style.top = `${e.clientY + 14}px`;
+  }
 
   function handleMouseOver(e) {
     if (!isInspectMode) return;
     e.stopPropagation();
 
+    if (e.target.closest('.kill-addiction-zapper-toolbar')) return;
     if (e.target.tagName === 'INPUT' && (e.target.type === 'password' || e.target.type === 'email')) return;
 
     if (hoveredElement) {
@@ -575,6 +645,12 @@
     }
     hoveredElement = e.target;
     hoveredElement.classList.add('kill-addiction-highlight');
+
+    if (selectorTooltip) {
+      const sel = generateSelector(hoveredElement);
+      selectorTooltip.textContent = sel ? `Target: ${sel}` : 'Element';
+      selectorTooltip.style.display = 'block';
+    }
   }
 
   function handleMouseOut(e) {
@@ -583,10 +659,22 @@
       hoveredElement.classList.remove('kill-addiction-highlight');
       hoveredElement = null;
     }
+    if (selectorTooltip) {
+      selectorTooltip.style.display = 'none';
+    }
+  }
+
+  function handleKeyDown(e) {
+    if (isInspectMode && e.key === 'Escape') {
+      e.preventDefault();
+      disableInspectMode();
+    }
   }
 
   function handleClick(e) {
     if (!isInspectMode) return;
+    if (e.target.closest('.kill-addiction-zapper-toolbar')) return;
+
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
@@ -606,28 +694,70 @@
       });
 
       disableInspectMode();
-      alert(`Element Zapped Permanently!\nSelector: ${selector}`);
+      alert(`🎉 Đã Ẩn Vĩnh Viễn Thành Phần Web!\n\nCSS Selector: ${selector}`);
     }
   }
 
   function generateSelector(el) {
-    if (el.id && !/\d{5,}/.test(el.id)) return `#${el.id}`;
-    if (el.getAttribute('data-pressable-container')) return '[data-pressable-container="true"]';
-    if (el.getAttribute('aria-label')) return `${el.tagName.toLowerCase()}[aria-label="${el.getAttribute('aria-label')}"]`;
-    if (el.getAttribute('data-pagelet')) return `[data-pagelet="${el.getAttribute('data-pagelet')}"]`;
-    if (el.getAttribute('data-e2e')) return `[data-e2e="${el.getAttribute('data-e2e')}"]`;
-    if (el.getAttribute('data-testid')) return `[data-testid="${el.getAttribute('data-testid')}"]`;
-    if (el.getAttribute('role')) return `${el.tagName.toLowerCase()}[role="${el.getAttribute('role')}"]`;
+    if (!el || el.nodeType !== 1) return '';
 
+    // 1. Clean ID Check (Ignoring dynamic numeric/hash IDs)
+    if (el.id && !/\d{4,}/.test(el.id) && !/^[a-z0-9]{10,}$/i.test(el.id)) {
+      return `#${el.id}`;
+    }
+
+    // 2. Data Attributes Priority (React, Vue, Angular, Next.js)
+    const priorityAttrs = [
+      'data-pressable-container',
+      'data-pagelet',
+      'data-e2e',
+      'data-testid',
+      'data-test-id',
+      'data-component',
+      'data-qa',
+      'data-id',
+      'aria-label',
+      'role',
+      'name',
+      'placeholder'
+    ];
+
+    for (const attr of priorityAttrs) {
+      const val = el.getAttribute(attr);
+      if (val) {
+        if (attr === 'data-pressable-container') return '[data-pressable-container="true"]';
+        return `${el.tagName.toLowerCase()}[${attr}="${val}"]`;
+      }
+    }
+
+    // 3. Link Href Targeting (Shorts, Reels, Explore, Watch)
+    if (el.tagName === 'A' && el.getAttribute('href')) {
+      const href = el.getAttribute('href');
+      if (href.includes('/shorts/') || href.includes('/reels/') || href.includes('/watch') || href.includes('/explore/')) {
+        const cleanHref = href.split('?')[0];
+        return `a[href*="${cleanHref}"]`;
+      }
+    }
+
+    // 4. Stable Class Names (filtering out dynamic hashed classes)
     if (el.className && typeof el.className === 'string') {
       const validClasses = el.className
-        .split(' ')
-        .filter((c) => c && !c.startsWith('css-') && !c.startsWith('r-') && !c.startsWith('kill-'));
+        .split(/\s+/)
+        .filter((c) => {
+          if (!c) return false;
+          if (c.startsWith('css-') || c.startsWith('r-') || c.startsWith('kill-') || c.startsWith('sc-')) return false;
+          if (/^[a-zA-Z0-9]{10,}$/.test(c)) return false;
+          if (/^x[0-9a-zA-Z]{5,}/.test(c)) return false;
+          if (/_[a-zA-Z0-9]{5,}$/.test(c)) return false;
+          return true;
+        });
+
       if (validClasses.length > 0) {
         return `${el.tagName.toLowerCase()}.${validClasses[0]}`;
       }
     }
 
+    // 5. Parent Combinator Fallback
     const parent = el.parentElement;
     if (parent) {
       const index = Array.from(parent.children).indexOf(el) + 1;
@@ -639,22 +769,29 @@
 
   function enableInspectMode() {
     isInspectMode = true;
+    createZapperUI();
+    document.addEventListener('mousemove', handleMouseMove, true);
     document.addEventListener('mouseover', handleMouseOver, true);
     document.addEventListener('mouseout', handleMouseOut, true);
     document.addEventListener('click', handleClick, true);
+    document.addEventListener('keydown', handleKeyDown, true);
     document.body.style.cursor = 'crosshair';
   }
 
   function disableInspectMode() {
     isInspectMode = false;
+    document.removeEventListener('mousemove', handleMouseMove, true);
     document.removeEventListener('mouseover', handleMouseOver, true);
     document.removeEventListener('mouseout', handleMouseOut, true);
     document.removeEventListener('click', handleClick, true);
+    document.removeEventListener('keydown', handleKeyDown, true);
     document.body.style.cursor = '';
+
     if (hoveredElement) {
       hoveredElement.classList.remove('kill-addiction-highlight');
       hoveredElement = null;
     }
+    removeZapperUI();
   }
 
   // Runtime Messages Listener

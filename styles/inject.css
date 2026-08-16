@@ -3,16 +3,18 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. FACEBOOK: Eradicate Center Feed, Posts & Stories
+   1. FACEBOOK: Eradicate Center Feed, Posts, Stories & Reels
    -------------------------------------------------------------------------- */
 html[data-kill-facebook="true"] [role="feed"],
 html[data-kill-facebook="true"] [data-pagelet="Feed"],
 html[data-kill-facebook="true"] [data-pagelet="GroupFeed"],
 html[data-kill-facebook="true"] [data-pagelet="VideoFeed"],
+html[data-kill-facebook="true"] [data-pagelet="WatchFeed"],
 html[data-kill-facebook="true"] [data-pagelet="Stories"],
 html[data-kill-facebook="true"] [aria-label="Tin"],
 html[data-kill-facebook="true"] [aria-label="Reels"],
 html[data-kill-facebook="true"] [aria-label="Thước phim"],
+html[data-kill-facebook="true"] a[href*="/reels/"],
 html[data-kill-facebook="true"] div[role="main"] [data-pagelet^="FeedUnit"],
 html[data-kill-facebook="true"] div[role="main"] div[role="article"]:not([role="complementary"] *):not([data-pagelet="ChatTab"] *):not([role="dialog"] *):not([aria-label="Messenger"] *),
 html[data-kill-facebook="true"] #stream_pagelet {
@@ -34,20 +36,24 @@ html[data-kill-threads="true"] main div:has(> [data-pressable-container="true"])
 }
 
 /* --------------------------------------------------------------------------
-   3. YOUTUBE: Eradicate Home Grid & Video Recommendations
+   3. YOUTUBE: Eradicate Home Grid, Shorts & Video Recommendations
    -------------------------------------------------------------------------- */
 html[data-kill-youtube="true"] ytd-rich-grid-renderer,
 html[data-kill-youtube="true"] ytd-reel-shelf-renderer,
+html[data-kill-youtube="true"] ytd-rich-shelf-renderer,
 html[data-kill-youtube="true"] ytd-watch-next-secondary-results-renderer,
-html[data-kill-youtube="true"] #related {
+html[data-kill-youtube="true"] #related,
+html[data-kill-youtube="true"] ytd-mini-guide-entry-renderer:has(a[href*="/shorts"]),
+html[data-kill-youtube="true"] ytd-guide-entry-renderer:has(a[href*="/shorts"]) {
   display: none !important;
 }
 
 /* --------------------------------------------------------------------------
-   4. TIKTOK: Eradicate Video Feed & Recommended Stream
+   4. TIKTOK: Eradicate Video Feed, Explore & Recommended Stream
    -------------------------------------------------------------------------- */
 html[data-kill-tiktok="true"] [data-e2e="recommend-feed-container"],
 html[data-kill-tiktok="true"] [data-e2e="feed-video"],
+html[data-kill-tiktok="true"] [data-e2e="explore-item-list"],
 html[data-kill-tiktok="true"] div[class*="DivFeedContainer"],
 html[data-kill-tiktok="true"] div[class*="DivItemContainer"],
 html[data-kill-tiktok="true"] div[class*="DivVideoFeed"],
@@ -56,12 +62,14 @@ html[data-kill-tiktok="true"] main div[class*="DivBodyContainer"] > div[class*="
 }
 
 /* --------------------------------------------------------------------------
-   5. INSTAGRAM: Eradicate Feed & Stories (Preserve /direct/ Messages)
+   5. INSTAGRAM: Eradicate Feed, Stories, Explore & Reels (Preserve /direct/ Messages)
    -------------------------------------------------------------------------- */
 html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] article,
 html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] section > div,
 html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] [aria-label="Stories"],
-html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] [aria-label="Tin"] {
+html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) main[role="main"] [aria-label="Tin"],
+html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) a[href*="/reels/"],
+html[data-kill-instagram="true"]:not([data-is-ig-direct="true"]) a[href*="/explore/"] {
   display: none !important;
 }
 
@@ -149,12 +157,59 @@ html[data-kill-custom-blocked="true"] body {
    8. DOM INSPECTOR ZAPPER & USER ZAPPED STYLES
    -------------------------------------------------------------------------- */
 .kill-addiction-highlight {
-  outline: 3px solid #f43f5e !important;
+  outline: 3px dashed #f43f5e !important;
   outline-offset: -3px !important;
-  background-color: rgba(244, 63, 94, 0.15) !important;
+  background-color: rgba(244, 63, 94, 0.18) !important;
   cursor: crosshair !important;
+  transition: outline 0.1s ease !important;
 }
 
 .kill-addiction-zapped {
   display: none !important;
+}
+
+.kill-addiction-zapper-toolbar {
+  position: fixed !important;
+  top: 12px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 2147483647 !important;
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 10px 20px !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
+  border: 2px solid #f43f5e !important;
+  font-family: system-ui, -apple-system, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  pointer-events: auto !important;
+}
+
+.kill-addiction-zapper-toolbar button {
+  background: #f43f5e !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 4px 12px !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.kill-addiction-selector-tooltip {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  background: #1e293b !important;
+  color: #38bdf8 !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  font-family: monospace !important;
+  font-size: 11px !important;
+  border: 1px solid #38bdf8 !important;
+  pointer-events: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
 }
