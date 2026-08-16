@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentRange = 'today'; // 'today' or 'week'
   let weekOffset = 0; // 0 = current week, -1 = last week, etc.
+  let selectedDayIndex = null; // null (whole week/range) or 0..6 (specific day T2..CN)
 
   const PLATFORM_NAMES = {
     facebook: 'Facebook',
@@ -107,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
       filterBtns.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       currentRange = btn.dataset.range;
+      selectedDayIndex = null;
       renderAnalytics();
     });
   });
@@ -115,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (prevWeekBtn) {
     prevWeekBtn.onclick = () => {
       weekOffset--;
+      selectedDayIndex = null;
       renderAnalytics();
     };
   }
@@ -123,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextWeekBtn.onclick = () => {
       if (weekOffset < 0) {
         weekOffset++;
+        selectedDayIndex = null;
         renderAnalytics();
       }
     };
@@ -182,38 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderAnalytics() {
     chrome.storage.local.get(['trackingData'], (res) => {
       const trackingData = res.trackingData || {};
-      const todayKey = getTodayKey();
 
-      let aggregatedDomains = {};
-      let totalTimeSec = 0;
-
-      // 1. Calculate Active Range Data
-      if (currentRange === 'today') {
-        const todayData = trackingData[todayKey] || { totalSeconds: 0, domains: {} };
-        aggregatedDomains = todayData.domains || {};
-        totalTimeSec = todayData.totalSeconds || 0;
-      } else {
-        const dates = Object.keys(trackingData).sort().slice(-7);
-        dates.forEach((dateKey) => {
-          const dayData = trackingData[dateKey];
-          if (dayData && dayData.domains) {
-            totalTimeSec += dayData.totalSeconds || 0;
-            Object.entries(dayData.domains).forEach(([dom, sec]) => {
-              aggregatedDomains[dom] = (aggregatedDomains[dom] || 0) + sec;
-            });
-          }
-        });
-      }
-
-      // Sort domains by usage time descending
-      const sortedDomains = Object.entries(aggregatedDomains).sort((a, b) => b[1] - a[1]);
-
-      // Metrics Cards
-      document.getElementById('metric-today-time').textContent = formatTime(totalTimeSec);
-      document.getElementById('metric-domain-count').textContent = `${sortedDomains.length} domains`;
-      document.getElementById('metric-top-domain').textContent = sortedDomains.length > 0 ? sortedDomains[0][0] : '--';
-
-      // 2. Prepare Monday to Sunday Weekly Data with Offset Controls
+      // 1. Get 7 days for active weekOffset
       const weekDays = getMondayToSundayDates(weekOffset);
       const weeklyLabels = weekDays.map((d) => d.label);
       const weeklyMinutes = weekDays.map((d) => {
@@ -221,7 +195,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.round(daySec / 60);
       });
 
-      // Update Week Label Cleanly (No double parentheses!)
+      // Calculate max available day index for line chart cutoff
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const currentDayIdxInWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const maxDayIndex = weekOffset === 0 ? currentDayIdxInWeek : 6;
+
+      // Update Week Label
       if (currentWeekLabel) {
         const startDateStr = weekDays[0].rawDate;
         const endDateStr = weekDays[6].rawDate;
@@ -238,6 +218,57 @@ document.addEventListener('DOMContentLoaded', () => {
       if (nextWeekBtn) {
         nextWeekBtn.disabled = weekOffset >= 0;
       }
+
+      // 2. Aggregate Domains Data depending on active filters
+      let aggregatedDomains = {};
+      let totalTimeSec = 0;
+      let titleLabel = '';
+
+      if (selectedDayIndex !== null) {
+        // Specific day selected from weekly trend chart
+        const selectedDay = weekDays[selectedDayIndex];
+        const dayData = trackingData[selectedDay.key] || { totalSeconds: 0, domains: {} };
+        aggregatedDomains = dayData.domains || {};
+        totalTimeSec = dayData.totalSeconds || 0;
+        titleLabel = `Tổng thời gian Chrome (${selectedDay.label})`;
+      } else if (currentRange === 'today' && weekOffset === 0) {
+        // "Hôm nay" filter in current week
+        const todayKey = getTodayKey();
+        const todayData = trackingData[todayKey] || { totalSeconds: 0, domains: {} };
+        aggregatedDomains = todayData.domains || {};
+        totalTimeSec = todayData.totalSeconds || 0;
+        titleLabel = `Tổng thời gian Chrome (Hôm nay)`;
+      } else {
+        // Full Week Aggregation for weekDays
+        weekDays.forEach((d) => {
+          const dayData = trackingData[d.key];
+          if (dayData && dayData.domains) {
+            totalTimeSec += dayData.totalSeconds || 0;
+            Object.entries(dayData.domains).forEach(([dom, sec]) => {
+              aggregatedDomains[dom] = (aggregatedDomains[dom] || 0) + sec;
+            });
+          }
+        });
+
+        if (weekOffset === 0) {
+          titleLabel = `Tổng thời gian Chrome (Tuần này)`;
+        } else if (weekOffset === -1) {
+          titleLabel = `Tổng thời gian Chrome (Tuần trước)`;
+        } else {
+          titleLabel = `Tổng thời gian Chrome (${Math.abs(weekOffset)} tuần trước)`;
+        }
+      }
+
+      // Sort domains by usage time descending
+      const sortedDomains = Object.entries(aggregatedDomains).sort((a, b) => b[1] - a[1]);
+
+      // Metrics Cards
+      const metricTitleElem = document.getElementById('metric-today-title');
+      if (metricTitleElem) metricTitleElem.textContent = titleLabel;
+
+      document.getElementById('metric-today-time').textContent = formatTime(totalTimeSec);
+      document.getElementById('metric-domain-count').textContent = `${sortedDomains.length} domains`;
+      document.getElementById('metric-top-domain').textContent = sortedDomains.length > 0 ? sortedDomains[0][0] : '--';
 
       // 3. BAR CHART: TOP 5 WEBS TRUY CẬP NHIỀU NHẤT
       const top5Domains = sortedDomains.slice(0, 5);
@@ -266,20 +297,29 @@ document.addEventListener('DOMContentLoaded', () => {
       const activeTheme = document.body.getAttribute('data-theme') || 'dark';
       const accent = themeColors[activeTheme] || '#38bdf8';
 
-      // Calculate current day index in Monday-Sunday week
-      const now = new Date();
-      const dayOfWeek = now.getDay();
-      const currentDayIdxInWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const maxDayIndex = weekOffset === 0 ? currentDayIdxInWeek : 6;
-
       if (typeof ChartEngine !== 'undefined') {
-        // Render Weekly Trend Line Chart (Mon -> Sun) with line cutoff & XXhXXm labels
-        ChartEngine.renderWeeklyTrendChart('weekly-chart', weeklyLabels, weeklyMinutes, accent, maxDayIndex);
+        // Render Weekly Trend Line Chart with Day Click Callback
+        ChartEngine.renderWeeklyTrendChart(
+          'weekly-chart',
+          weeklyLabels,
+          weeklyMinutes,
+          accent,
+          maxDayIndex,
+          selectedDayIndex,
+          (clickedDayIdx) => {
+            if (selectedDayIndex === clickedDayIdx) {
+              selectedDayIndex = null;
+            } else {
+              selectedDayIndex = clickedDayIdx;
+            }
+            renderAnalytics();
+          }
+        );
 
-        // Render Bar Chart (Top 5 Domains with synchronized colors)
+        // Render Bar Chart (Top 5 Domains)
         ChartEngine.renderBarChart('bar-chart', barLabels, barData, barColors);
 
-        // Render Interactive Donut Chart (ALL Domains with synchronized colors)
+        // Render Interactive Donut Chart (ALL Domains)
         ChartEngine.renderDonutChart('donut-chart', donutLabels, donutData, donutColors, (clickedSlice) => {
           if (donutDetailCard) {
             donutDetailCard.style.display = 'block';
@@ -290,12 +330,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Render Full Ranking Table with synchronized colors
+      // Render Full Ranking Table
       const tableBody = document.getElementById('domain-list-body');
       tableBody.innerHTML = '';
 
       if (sortedDomains.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#94a3b8; padding:20px;">Chưa có dữ liệu theo dõi thời gian. Hãy lướt web để cập nhật thống kê!</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#94a3b8; padding:20px;">Chưa có dữ liệu theo dõi thời gian cho khoảng thời gian đã chọn!</td></tr>';
         return;
       }
 

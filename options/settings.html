@@ -46,37 +46,10 @@
 
     <!-- TAB 1: Analytics Dashboard -->
     <main id="tab-analytics" class="tab-content active">
-      <!-- Metric Cards -->
-      <section class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-icon">⏱️</div>
-          <div class="metric-info">
-            <span class="metric-title">Tổng thời gian Chrome (Hôm nay)</span>
-            <span id="metric-today-time" class="metric-value">0 phút</span>
-          </div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-icon">🌐</div>
-          <div class="metric-info">
-            <span class="metric-title">Số trang Web đã duyệt</span>
-            <span id="metric-domain-count" class="metric-value">0 domains</span>
-          </div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-icon">🏆</div>
-          <div class="metric-info">
-            <span class="metric-title">Trang dùng nhiều nhất</span>
-            <span id="metric-top-domain" class="metric-value">--</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Weekly Trend Chart Card with Week Controls -->
+      <!-- 1. Weekly Trend Chart Card with Week Controls (Line 1 - Top) -->
       <section class="chart-card weekly-chart-card">
         <div class="card-header">
-          <h3>📅 Tổng Thời Gian Sử Dụng Web Cả Tuần</h3>
+          <h3>📅 Tổng Thời Gian Sử Dụng Web Cả Tuần (Click Ngày Để Xem Chi Tiết)</h3>
           <div class="week-nav-group">
             <button id="prev-week-btn" class="filter-btn" title="Xem tuần trước">◄ Tuần trước</button>
             <span id="current-week-label" class="week-label">Tuần này</span>
@@ -88,14 +61,14 @@
         </div>
       </section>
 
-      <!-- Charts Grid -->
+      <!-- 2. Charts Grid: Top 5 Bar Chart + Donut Chart (Line 2) -->
       <section class="charts-grid">
         <div class="chart-card main-chart">
           <div class="card-header">
             <h3>📈 Top 5 Webs Truy Cập Nhiều Nhất</h3>
             <div class="filter-group">
               <button class="filter-btn active" data-range="today">Hôm nay</button>
-              <button class="filter-btn" data-range="week">7 ngày qua</button>
+              <button class="filter-btn" data-range="week">Cả tuần</button>
             </div>
           </div>
           <div class="chart-wrapper">
@@ -121,7 +94,34 @@
         </div>
       </section>
 
-      <!-- Detailed Domain Ranking Table -->
+      <!-- 3. Metric Cards (Line 3) -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">⏱️</div>
+          <div class="metric-info">
+            <span id="metric-today-title" class="metric-title">Tổng thời gian Chrome</span>
+            <span id="metric-today-time" class="metric-value">0 phút</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">🌐</div>
+          <div class="metric-info">
+            <span class="metric-title">Số trang Web đã duyệt</span>
+            <span id="metric-domain-count" class="metric-value">0 domains</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">🏆</div>
+          <div class="metric-info">
+            <span class="metric-title">Trang dùng nhiều nhất</span>
+            <span id="metric-top-domain" class="metric-value">--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Detailed Domain Ranking Table (Line 4 - Bottom) -->
       <section class="domain-table-card">
         <h3>📋 Danh Sách Chi Tiết Thời Gian Theo Root Domain</h3>
         <div class="table-wrapper">

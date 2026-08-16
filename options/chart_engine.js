@@ -83,8 +83,8 @@ const ChartEngine = {
     });
   },
 
-  // Render Weekly Total Usage Bar/Trend Chart with XXhXXm labels and current-day line cutoff
-  renderWeeklyTrendChart(canvasId, dayLabels, totalMinutesData, accentColor, maxDayIndex = 6) {
+  // Render Weekly Total Usage Bar/Trend Chart with XXhXXm labels, current-day line cutoff & day selection interactivity
+  renderWeeklyTrendChart(canvasId, dayLabels, totalMinutesData, accentColor, maxDayIndex = 6, selectedDayIndex = null, onDayClickCallback = null) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -150,9 +150,21 @@ const ChartEngine = {
     dayLabels.forEach((label, i) => {
       const x = paddingLeft + i * stepX;
 
+      // Draw vertical guide line if selected
+      if (i === selectedDayIndex) {
+        ctx.beginPath();
+        ctx.moveTo(x, paddingTop - 10);
+        ctx.lineTo(x, height - paddingBottom);
+        ctx.strokeStyle = accentColor || '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
       // Render Day Label at bottom for all 7 days
-      ctx.fillStyle = '#cbd5e1';
-      ctx.font = '11px system-ui';
+      ctx.fillStyle = i === selectedDayIndex ? '#ffffff' : '#cbd5e1';
+      ctx.font = i === selectedDayIndex ? 'bold 12px system-ui' : '11px system-ui';
       ctx.textAlign = 'center';
       ctx.fillText(label, x, height - paddingBottom + 18);
 
@@ -161,19 +173,54 @@ const ChartEngine = {
         const val = totalMinutesData[i];
         const y = height - paddingBottom - (val / maxVal) * chartH;
 
-        // Point circle
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fillStyle = accentColor || '#38bdf8';
-        ctx.fill();
+        if (i === selectedDayIndex) {
+          // Selected Highlight Ring
+          ctx.beginPath();
+          ctx.arc(x, y, 7, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = accentColor || '#38bdf8';
+          ctx.fill();
+        } else {
+          // Normal Point circle
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = accentColor || '#38bdf8';
+          ctx.fill();
+        }
 
         // Time Text above point (e.g. 1h25m or 45m)
         const timeText = this.formatMinutesShort(val);
-        ctx.fillStyle = '#f8fafc';
-        ctx.font = 'bold 11px system-ui';
+        ctx.fillStyle = i === selectedDayIndex ? (accentColor || '#38bdf8') : '#f8fafc';
+        ctx.font = i === selectedDayIndex ? 'bold 12px system-ui' : 'bold 11px system-ui';
         ctx.fillText(timeText, x, y - 10);
       }
     });
+
+    // Attach Click Handler for Day Selection
+    canvas.onclick = (evt) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = evt.clientX - rect.left;
+
+      const stepX = chartW / 6;
+      let closestIdx = -1;
+      let minDiff = Infinity;
+
+      for (let i = 0; i <= activeMaxIdx; i++) {
+        const ptX = paddingLeft + i * stepX;
+        const diff = Math.abs(x - ptX);
+        if (diff < stepX / 2 && diff < minDiff) {
+          minDiff = diff;
+          closestIdx = i;
+        }
+      }
+
+      if (closestIdx !== -1 && onDayClickCallback) {
+        onDayClickCallback(closestIdx);
+      }
+    };
   },
 
   // Render Interactive Donut Chart for Usage Distribution
