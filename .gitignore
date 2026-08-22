@@ -1,0 +1,6 @@
+# Ignore documentation plans and scratch files
+docs/
+.gemini/
+.vs/
+*.pyc
+__pycache__/
