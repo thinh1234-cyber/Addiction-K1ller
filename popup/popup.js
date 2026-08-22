@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KILL ADDICTION - Popup Interface Controller (Synced Controls & Live Countdown)
+   ADDICTION K1LLER - Popup Interface Controller (Synced Controls & Live Countdown)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {

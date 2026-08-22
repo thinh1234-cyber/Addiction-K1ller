@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const langSelect = document.getElementById('lang-select');
   const i18n = {
     vi: {
-      title: 'Kill Addiction',
+      title: 'Addiction K1ller',
       subtitle: 'Cài đặt & Biểu đồ thống kê thời gian Chrome',
       tabAnalytics: '📊 Thống Kê Thời Gian',
       tabPerformance: '⚡ Hiệu Suất',
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
       donutDetailTitle: 'Chi Tiết Domain'
     },
     en: {
-      title: 'Kill Addiction',
+      title: 'Addiction K1ller',
       subtitle: 'Chrome Settings & Web Usage Time Analytics',
       tabAnalytics: '📊 Time Analytics',
       tabPerformance: '⚡ Performance',
@@ -907,8 +907,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Sort domains by usage time descending
-      const sortedDomains = Object.entries(aggregatedDomains).sort((a, b) => b[1] - a[1]);
+      // Sort domains by usage time descending (filtering out null / invalid domains)
+      const sortedDomains = Object.entries(aggregatedDomains)
+        .filter(([dom]) => dom && dom !== 'null' && dom !== 'undefined' && dom.trim() !== '')
+        .sort((a, b) => b[1] - a[1]);
 
       // Metrics Cards
       const metricTitleElem = document.getElementById('metric-today-title');

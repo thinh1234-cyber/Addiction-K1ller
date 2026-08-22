@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KILL ADDICTION - Background Service Worker & Root Domain Time Tracking
+   ADDICTION K1LLER - Background Service Worker & Root Domain Time Tracking
    ========================================================================== */
 
 let activeSession = {
@@ -12,9 +12,15 @@ function extractRootDomain(url) {
   if (!url) return null;
   try {
     const parsed = new URL(url);
+    
+    // Only track valid HTTP and HTTPS websites
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return null;
+    }
+
     let host = parsed.hostname.toLowerCase().trim().replace(/\.$/, '');
 
-    if (['chrome:', 'chrome-extension:', 'edge:', 'about:', 'file:'].includes(parsed.protocol)) {
+    if (!host || host === 'null' || host === 'undefined') {
       return null;
     }
 
@@ -55,21 +61,61 @@ function getTodayKey() {
   return `${year}-${month}-${day}`;
 }
 
+// Clean legacy invalid "null" / "undefined" domain keys from trackingData
+function sanitizeTrackingData(trackingData) {
+  if (!trackingData || typeof trackingData !== 'object') return trackingData;
+  let modified = false;
+
+  Object.keys(trackingData).forEach((dateKey) => {
+    const dayData = trackingData[dateKey];
+    if (dayData && dayData.domains) {
+      ['null', 'undefined', '', 'false'].forEach((badKey) => {
+        if (badKey in dayData.domains) {
+          const badSec = dayData.domains[badKey] || 0;
+          delete dayData.domains[badKey];
+          if (dayData.totalSeconds && badSec > 0) {
+            dayData.totalSeconds = Math.max(0, dayData.totalSeconds - badSec);
+          }
+          modified = true;
+        }
+      });
+    }
+  });
+
+  if (modified) {
+    chrome.storage.local.set({ trackingData });
+  }
+  return trackingData;
+}
+
 // Flush current active domain time to storage
 async function flushActiveTime() {
   if (!activeSession.domain || !activeSession.startTime) return;
 
+  const validDom = String(activeSession.domain).trim();
+  if (!validDom || validDom === 'null' || validDom === 'undefined' || validDom === 'false') {
+    activeSession.domain = null;
+    activeSession.startTime = null;
+    return;
+  }
+
   const now = Date.now();
-  const durationSec = Math.floor((now - activeSession.startTime) / 1000);
+  let durationSec = Math.floor((now - activeSession.startTime) / 1000);
   activeSession.startTime = now; // reset anchor
 
   if (durationSec <= 0) return;
+
+  // Protect against PC Sleep / Hibernate / Suspension gap (ticker interval is 5s)
+  // If system was hibernating for minutes/hours, cap duration to standard step
+  if (durationSec > 30) {
+    durationSec = 5;
+  }
 
   const todayKey = getTodayKey();
   const currentHour = new Date().getHours();
 
   chrome.storage.local.get({ trackingData: {} }, (res) => {
-    const trackingData = res.trackingData || {};
+    let trackingData = sanitizeTrackingData(res.trackingData || {});
     if (!trackingData[todayKey]) {
       trackingData[todayKey] = {
         totalSeconds: 0,
@@ -84,7 +130,7 @@ async function flushActiveTime() {
     }
 
     dayData.totalSeconds = (dayData.totalSeconds || 0) + durationSec;
-    dayData.domains[activeSession.domain] = (dayData.domains[activeSession.domain] || 0) + durationSec;
+    dayData.domains[validDom] = (dayData.domains[validDom] || 0) + durationSec;
     dayData.hourly[currentHour] = (dayData.hourly[currentHour] || 0) + durationSec;
 
     chrome.storage.local.set({ trackingData });
@@ -96,7 +142,7 @@ async function switchActiveDomain(newUrl) {
   await flushActiveTime();
 
   const domain = extractRootDomain(newUrl);
-  if (domain) {
+  if (domain && domain !== 'null' && domain !== 'undefined') {
     activeSession.domain = domain;
     activeSession.startTime = Date.now();
   } else {

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Kill Addiction - Feed Blocker & DOM Inspector",
+  "name": "Addiction K1ller - Feed Blocker & DOM Inspector",
   "version": "2.1.0",
   "description": "Block distracting news feeds and custom websites while keeping Chat, Search, and Messages intact. Includes DOM picker, theme engine, and time analytics.",
   "permissions": [

@@ -46,7 +46,7 @@ Chrome Extension giúp ẩn triệt để News Feed gây xao nhãng.
 2. Mở trình duyệt Google Chrome hoặc Brave/Edge và truy cập: `chrome://extensions/`
 3. Bật **Chế độ dành cho nhà phát triển (Developer mode)** ở góc trên bên phải.
 4. Nhấp chọn **Tải tiện ích đã giải nén (Load unpacked)** và chọn thư mục chứa dự án `kill addiction`.
-5. Ghim biểu tượng **Kill Addiction 🛡️** lên thanh tiện ích để sẵn sàng sử dụng!
+5. Ghim biểu tượng **Addiction K1ller 🛡️** lên thanh tiện ích để sẵn sàng sử dụng!
 
 ---
 

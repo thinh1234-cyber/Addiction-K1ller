@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KILL ADDICTION - Dynamic Content Script & Multi-Platform Eradicator
+   ADDICTION K1LLER - Dynamic Content Script & Multi-Platform Eradicator
    ========================================================================== */
 
 (function () {

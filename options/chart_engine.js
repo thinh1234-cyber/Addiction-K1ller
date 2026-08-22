@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KILL ADDICTION - Interactive Canvas Chart Engine (Sleek Per-Element Hover & Accurate Time Formatting)
+   ADDICTION K1LLER - Interactive Canvas Chart Engine (Sleek Per-Element Hover & Accurate Time Formatting)
    ========================================================================== */
 
 const ChartEngine = {

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kill Addiction - Cài Đặt & Thống Kê Thời Gian</title>
+  <title>Addiction K1ller - Cài Đặt & Thống Kê Thời Gian</title>
   <link rel="stylesheet" href="settings.css">
 </head>
 
@@ -15,7 +15,7 @@
       <div class="brand">
         <span class="logo-icon">🛡️</span>
         <div class="brand-text">
-          <h1 id="i18n-title">Kill Addiction</h1>
+          <h1 id="i18n-title">Addiction K1ller</h1>
           <p id="i18n-subtitle">Cài đặt & Biểu đồ thống kê thời gian Chrome</p>
         </div>
       </div>
@@ -180,7 +180,8 @@
           <div class="metric-info">
             <span class="metric-title" id="i18n-distraction-index-label">Tỷ Lệ Xao Nhãng</span>
             <span id="distraction-index-value" class="metric-value" style="color:#38bdf8;">--%</span>
-            <p id="distraction-index-advice" class="section-desc" style="margin-top:2px; margin-bottom:0; font-size:11px;">Calculating...</p>
+            <p id="distraction-index-advice" class="section-desc"
+              style="margin-top:2px; margin-bottom:0; font-size:11px;">Calculating...</p>
           </div>
         </div>
       </section>
@@ -190,7 +191,8 @@
         <div class="card-header">
           <h3 id="i18n-heatmap-title">🔥 Biểu Đồ Nhiệt Mật Độ Sử Dụng Web 24 Giờ Trong Ngày</h3>
         </div>
-        <p class="section-desc" id="i18n-heatmap-desc">Rê chuột vào các cột giờ (0h đến 23h) để kiểm tra thời điểm bạn hoạt động nhiều nhất.</p>
+        <p class="section-desc" id="i18n-heatmap-desc">Rê chuột vào các cột giờ (0h đến 23h) để kiểm tra thời điểm bạn
+          hoạt động nhiều nhất.</p>
         <div class="chart-wrapper">
           <canvas id="heatmap-chart"></canvas>
         </div>
@@ -200,7 +202,7 @@
       <section class="domain-table-card">
         <div class="card-header" style="margin-bottom:12px; flex-wrap:wrap; gap:12px;">
           <h3 id="i18n-contrib-title">📅 Biểu Đồ Nhiệt Xao Nhãng Theo Ngày</h3>
-          
+
           <div style="display:flex; align-items:center; gap:12px; margin-left:auto; flex-wrap:wrap;">
             <!-- View Mode Switch: Month / Week -->
             <div class="filter-group">
@@ -211,7 +213,8 @@
             <!-- Calendar Nav Controls -->
             <div class="week-nav-group">
               <button id="contrib-prev-btn" class="filter-btn" title="Trở về trước">◄</button>
-              <span id="contrib-date-label" class="week-label" style="min-width:110px; text-align:center;">Tháng 8/2026</span>
+              <span id="contrib-date-label" class="week-label" style="min-width:110px; text-align:center;">Tháng
+                8/2026</span>
               <button id="contrib-next-btn" class="filter-btn" title="Tiến về sau">►</button>
             </div>
           </div>
@@ -224,12 +227,19 @@
           <span id="i18n-legend-high" style="font-size:11px; color:#94a3b8;">Nhiều</span>
         </div>
 
-        <p class="section-desc" id="i18n-contrib-desc" style="margin-top:8px;">Màu sắc pastel đồng bộ theo giao diện, biểu thị cấp độ giải trí từ dịu mát đến ấm đậm.</p>
+        <p class="section-desc" id="i18n-contrib-desc" style="margin-top:8px;">Màu sắc pastel đồng bộ theo giao diện,
+          biểu thị cấp độ giải trí từ dịu mát đến ấm đậm.</p>
 
         <!-- Calendar Heatmap Grid Container -->
         <div class="calendar-heatmap-container">
           <div id="calendar-weekday-header" class="calendar-weekday-header">
-            <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
+            <div>T2</div>
+            <div>T3</div>
+            <div>T4</div>
+            <div>T5</div>
+            <div>T6</div>
+            <div>T7</div>
+            <div>CN</div>
           </div>
           <div id="github-contrib-grid" class="contrib-calendar-grid">
             <!-- Dynamically Populated Pastel Squares -->
@@ -248,7 +258,8 @@
             🔒 STRICT FOCUS LOCK ACTIVE
           </div>
         </div>
-        <p class="section-desc" id="i18n-cfg-platforms-desc">Chỉ ẩn Newsfeed & bài viết gây xao nhãng. Giữ 100% tính năng Chat/Messenger & Tìm kiếm</p>
+        <p class="section-desc" id="i18n-cfg-platforms-desc">Chỉ ẩn Newsfeed & bài viết gây xao nhãng. Giữ 100% tính
+          năng Chat/Messenger & Tìm kiếm</p>
 
         <div id="platform-config-list" class="config-list">
           <div class="config-item">
@@ -330,12 +341,14 @@
           </p>
 
           <div class="custom-block-form" style="align-items:center;">
-            <select id="focus-duration-select" style="background:var(--item-bg); color:var(--text-main); border:1px solid var(--card-border); padding:10px 14px; border-radius:8px; font-size:13px;">
+            <select id="focus-duration-select"
+              style="background:var(--item-bg); color:var(--text-main); border:1px solid var(--card-border); padding:10px 14px; border-radius:8px; font-size:13px;">
               <option value="25" id="i18n-opt-25">25 Phút (Kỹ thuật Pomodoro)</option>
               <option value="45" id="i18n-opt-45">45 Phút (Phiên Deep Work)</option>
               <option value="60" id="i18n-opt-60">60 Phút (Hardcore Focus)</option>
             </select>
-            <button id="start-strict-focus-btn" class="btn-primary-inline" style="background:#f43f5e; color:#fff;">🚀 Kích Hoạt Strict Focus</button>
+            <button id="start-strict-focus-btn" class="btn-primary-inline" style="background:#f43f5e; color:#fff;">🚀
+              Kích Hoạt Strict Focus</button>
           </div>
         </div>
 
@@ -343,7 +356,8 @@
         <div class="custom-block-section" style="margin-top:24px;">
           <h3 id="i18n-custom-block-title">🚫 Chặn Trang Web & Subdomain Tùy Chỉnh</h3>
           <p class="section-desc" id="i18n-custom-block-desc">
-            Nhập tên miền trang web muốn <strong>Chặn Hẳn Hoàn Toàn</strong> (vd: <code>reddit.com</code> hoặc <code>twitter.com</code>). Tất cả Subdomain của trang cũng sẽ bị dừng hoàn toàn truy cập!
+            Nhập tên miền trang web muốn <strong>Chặn Hẳn Hoàn Toàn</strong> (vd: <code>reddit.com</code> hoặc
+            <code>twitter.com</code>). Tất cả Subdomain của trang cũng sẽ bị dừng hoàn toàn truy cập!
           </p>
 
           <div class="custom-block-form">
@@ -384,9 +398,12 @@
 
                 <!-- Compact 1-Line Form: [ Domain ] [ Mins ] [ Save Button ] -->
                 <div class="compact-inline-form">
-                  <input type="text" id="quota-domain-input" placeholder="Domain (vd: reddit.com)" style="flex:1.5; min-width:120px;">
-                  <input type="number" id="quota-mins-input" placeholder="Phút" min="1" max="1440" style="width:70px; text-align:center;">
-                  <button id="add-quota-btn" class="btn-primary-inline" style="flex:1; white-space:nowrap; padding:8px 12px; font-size:12px;">🔒 Lưu & Khóa 3 Ngày</button>
+                  <input type="text" id="quota-domain-input" placeholder="Domain (vd: reddit.com)"
+                    style="flex:1.5; min-width:120px;">
+                  <input type="number" id="quota-mins-input" placeholder="Phút" min="1" max="1440"
+                    style="width:70px; text-align:center;">
+                  <button id="add-quota-btn" class="btn-primary-inline"
+                    style="flex:1; white-space:nowrap; padding:8px 12px; font-size:12px;">🔒 Lưu & Khóa 3 Ngày</button>
                 </div>
 
                 <div id="quota-list-container" class="custom-domain-tags" style="margin-top:8px;"></div>
@@ -404,7 +421,8 @@
                   </label>
                 </div>
 
-                <p class="section-desc" id="i18n-schedule-desc" style="font-size:11px; margin-top:4px; margin-bottom:8px;">
+                <p class="section-desc" id="i18n-schedule-desc"
+                  style="font-size:11px; margin-top:4px; margin-bottom:8px;">
                   Tự động kích hoạt tính năng chặn feed trong giờ hành chính.
                 </p>
 
@@ -440,7 +458,8 @@
           <div class="card-header" style="margin-bottom:8px;">
             <div>
               <h3 id="i18n-zapped-title">🎯 Bộ Chọn CSS Đã Ẩn Thủ Công</h3>
-              <p class="section-desc" style="margin-bottom:0;" id="i18n-zapped-desc">Các phần tử trang web bạn đã click ẩn trực tiếp bằng công cụ Zapper</p>
+              <p class="section-desc" style="margin-bottom:0;" id="i18n-zapped-desc">Các phần tử trang web bạn đã click
+                ẩn trực tiếp bằng công cụ Zapper</p>
             </div>
             <button id="clear-all-zapped" class="btn-danger">Xóa Tất Cả Zapped</button>
           </div>
